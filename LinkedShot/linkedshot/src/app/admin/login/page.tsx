@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import Link from "next/link";
 const ADMIN_USERNAME = "ADMIN";
 const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/admin";
@@ -104,5 +104,19 @@ export default function AdminLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-zinc-100">
+          <p className="text-zinc-500">Loading…</p>
+        </div>
+      }
+    >
+      <AdminLoginForm />
+    </Suspense>
   );
 }
