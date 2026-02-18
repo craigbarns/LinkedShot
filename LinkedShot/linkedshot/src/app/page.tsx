@@ -265,13 +265,22 @@ export default function Home() {
             <div>
               <h4 className="mb-4 font-bold">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Terms</li>
-                <li>Privacy</li>
+                <li>
+                  <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="hover:text-white">Terms of Service</Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="mb-4 font-bold">Contact</h4>
-              <p className="text-sm text-gray-400">contact@linkedshot.com</p>
+              <p className="text-sm text-gray-400">
+                <Link href="/contact" className="hover:text-white">Contact Us</Link>
+              </p>
+              <p className="mt-2 text-xs text-gray-500">
+                WEMADE · 41 rue Fongate, 13006 Marseille, France
+              </p>
             </div>
           </div>
         </footer>
