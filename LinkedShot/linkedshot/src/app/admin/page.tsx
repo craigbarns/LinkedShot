@@ -20,6 +20,7 @@ type Stats = {
   revenueCents: number;
   revenueEuros: number;
   recentSales: { date: string; amount: number; plan: string; credits: number }[];
+  revenueSinceDate?: string | null;
 } | null;
 
 export default function AdminPage() {
@@ -144,6 +145,11 @@ export default function AdminPage() {
                 <p className="text-2xl font-bold text-zinc-900">
                   €{stats.revenueEuros.toLocaleString("fr-FR", { minimumFractionDigits: 2 })}
                 </p>
+                {stats.revenueSinceDate && (
+                  <p className="mt-1 text-xs text-zinc-400">
+                    Depuis le {stats.revenueSinceDate}
+                  </p>
+                )}
               </div>
             </div>
           </div>

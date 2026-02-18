@@ -21,7 +21,7 @@ function SignInWithGoogleButton() {
   const handleClick = () => {
     try {
       const supabase = createClient();
-      const redirectTo = `${window.location.origin}/auth/callback`;
+      const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback`;
       supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo },
