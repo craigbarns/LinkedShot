@@ -33,7 +33,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { planId } = body as { planId?: string };
+    const { planId, currency: preferredCurrency } = body as {
+      planId?: string;
+      currency?: "eur" | "usd";
+    };
     if (!planId || !(planId in PLANS)) {
       return NextResponse.json(
         { error: "Invalid planId. Use 'starter' or 'pro'." },
@@ -42,6 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     const plan = PLANS[planId as PlanId];
+    const currency = preferredCurrency === "usd" ? "usd" : "eur";
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -55,7 +59,7 @@ export async function POST(request: NextRequest) {
         {
           quantity: 1,
           price_data: {
-            currency: "eur",
+            currency,
             unit_amount: plan.priceCents,
             product_data: {
               name: plan.name,

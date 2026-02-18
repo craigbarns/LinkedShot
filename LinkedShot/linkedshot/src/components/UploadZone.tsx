@@ -197,7 +197,7 @@ export default function UploadZone() {
             href="/#pricing"
             className="rounded-lg bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800"
           >
-            Upgrade to Starter (€9)
+            Upgrade to Starter (9€ or $9)
           </Link>
         </div>
         <p className="mt-4 text-sm text-gray-500">
@@ -299,7 +299,7 @@ export default function UploadZone() {
             href="/#pricing"
             className="inline-block rounded-lg bg-black px-6 py-2.5 font-semibold text-white hover:bg-zinc-800"
           >
-            Upgrade to Starter (€9)
+            Upgrade to Starter (9€ or $9)
           </Link>
         </div>
       )}

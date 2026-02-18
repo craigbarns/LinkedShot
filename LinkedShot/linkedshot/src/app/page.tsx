@@ -15,7 +15,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How many images can I process?",
-    a: "Each plan gives you credits: 3 free, 50 with Starter (€9), 200 with Pro (€29). One credit = one image. Process them one by one from the dashboard or the homepage.",
+    a: "Each plan gives you credits: 3 free, 50 with Starter (9€ or $9), 200 with Pro (29€ or $29). One credit = one image. Process them one by one from the dashboard or the homepage.",
   },
   {
     q: "What format should I upload?",

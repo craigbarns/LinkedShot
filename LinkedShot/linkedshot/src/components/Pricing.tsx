@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { PricingPlan } from "@/types";
+
+type Locale = { currency: "eur" | "usd"; symbol: string } | null;
 
 type PricingProps = {
   plans: PricingPlan[];
@@ -10,6 +12,14 @@ type PricingProps = {
 
 export default function Pricing({ plans }: PricingProps) {
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
+  const [locale, setLocale] = useState<Locale>(null);
+
+  useEffect(() => {
+    fetch("/api/locale", { credentials: "include" })
+      .then((r) => r.ok ? r.json() : { currency: "eur", symbol: "€" })
+      .then((data) => setLocale({ currency: data.currency ?? "eur", symbol: data.symbol ?? "€" }))
+      .catch(() => setLocale({ currency: "eur", symbol: "€" }));
+  }, []);
 
   const handleCheckout = async (planId: string) => {
     if (planId === "free") return;
@@ -19,7 +29,10 @@ export default function Pricing({ plans }: PricingProps) {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({
+          planId,
+          currency: locale?.currency ?? "eur",
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -60,7 +73,11 @@ export default function Pricing({ plans }: PricingProps) {
           </h3>
           <div className="mb-4 flex items-baseline gap-1">
             <span className="text-4xl font-bold text-gray-900">
-              {plan.price === 0 ? "0" : plan.price}€
+              {plan.price === 0
+                ? "0"
+                : locale?.symbol === "$"
+                  ? `$${plan.price}`
+                  : `${plan.price}€`}
             </span>
             <span className="text-gray-500">
               / {plan.credits} image{plan.credits > 1 ? "s" : ""}
@@ -87,7 +104,7 @@ export default function Pricing({ plans }: PricingProps) {
               onClick={() => handleCheckout(plan.id)}
               disabled={loadingPlanId !== null}
               className="flex w-full transform items-center justify-center rounded-xl bg-black py-3 font-semibold text-white transition hover:scale-[1.02] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70"
-              aria-label={`Get ${plan.credits} images for ${plan.price}€`}
+              aria-label={`Get ${plan.credits} images for ${locale?.symbol ?? "€"}${plan.price}`}
             >
               {loadingPlanId === plan.id
                 ? "Redirecting…"
