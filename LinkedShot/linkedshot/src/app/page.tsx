@@ -76,7 +76,7 @@ export default function Home() {
               Dashboard
             </Link>
             <Link
-              href="/dashboard"
+              href="/#upload"
               className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
             >
               Get Started
