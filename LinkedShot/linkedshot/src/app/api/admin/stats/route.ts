@@ -44,6 +44,10 @@ export async function GET(request: NextRequest) {
       supabase.from("credits").select("*", { count: "exact", head: true }),
     ]);
 
+    const revenueSince = process.env.ADMIN_REVENUE_SINCE_DATE
+      ? new Date(process.env.ADMIN_REVENUE_SINCE_DATE).getTime()
+      : 0;
+
     let revenueCents = 0;
     let totalSales = 0;
     let recentSales: { date: string; amount: number; plan: string; credits: number }[] = [];
@@ -53,12 +57,14 @@ export async function GET(request: NextRequest) {
         status: "complete",
         limit: 100,
       });
-      totalSales = sessions.data.length;
       for (const s of sessions.data) {
+        const createdMs = (s.created ?? 0) * 1000;
+        if (createdMs < revenueSince) continue;
         const amount = s.amount_total ?? 0;
         revenueCents += amount;
+        totalSales += 1;
         recentSales.push({
-          date: new Date((s.created ?? 0) * 1000).toISOString().slice(0, 10),
+          date: new Date(createdMs).toISOString().slice(0, 10),
           amount: amount / 100,
           plan: (s.metadata?.plan_id as string) ?? "—",
           credits: parseInt(s.metadata?.credits ?? "0", 10),
