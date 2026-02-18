@@ -1,13 +1,16 @@
 import Stripe from "stripe";
 
-const secret = process.env.STRIPE_SECRET_KEY;
-if (!secret) {
-  throw new Error("STRIPE_SECRET_KEY is not set");
-}
+let _stripe: Stripe | null = null;
 
-export const stripe = new Stripe(secret, {
-  typescript: true,
-});
+/** Stripe client — créé au premier usage pour ne pas bloquer le build si les env vars sont absentes. */
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    const secret = process.env.STRIPE_SECRET_KEY;
+    if (!secret) throw new Error("STRIPE_SECRET_KEY is not set");
+    _stripe = new Stripe(secret, { typescript: true });
+  }
+  return _stripe;
+}
 
 export const PLANS = {
   starter: { priceCents: 900, credits: 50, name: "Starter — 50 images" },

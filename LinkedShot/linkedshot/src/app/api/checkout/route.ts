@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { stripe, PLANS, type PlanId } from "@/lib/stripe";
+import { getStripe, PLANS, type PlanId } from "@/lib/stripe";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const plan = PLANS[planId as PlanId];
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       client_reference_id: user.id,
