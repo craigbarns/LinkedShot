@@ -23,6 +23,8 @@ Copie les **noms** ci-dessous et colle les **valeurs** depuis ton `.env.local` (
 |-----|-------------|
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clé publique Stripe (pk_live_...) |
 | `NEXT_PUBLIC_SITE_URL` | URL du site en prod (ex. https://linkedshot.vercel.app) |
+| `ADMIN_EMAIL` | Email du compte admin (doit être dans la liste autorisée) |
+| `NEXT_PUBLIC_ADMIN_EMAIL` | Même email : utilisé pour la connexion « ADMIN » sur /admin/login |
 
 ---
 
@@ -37,6 +39,10 @@ STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 NEXT_PUBLIC_SITE_URL
+ADMIN_EMAIL
+NEXT_PUBLIC_ADMIN_EMAIL
 ```
+
+**Admin :** Crée dans Supabase (Authentication → Users → Add user) un utilisateur avec l’email `admin@linkedshot.com` (ou celui que tu mets dans ADMIN_EMAIL) et le mot de passe de ton choix (ex. Linkedshot2302). Ensuite connecte-toi sur **/admin/login** avec user **ADMIN** et ce mot de passe.
 
 Renseigne chaque variable avec la valeur de ton `.env.local`, puis enregistre. Redéploie le projet si besoin pour que les variables soient prises en compte.
