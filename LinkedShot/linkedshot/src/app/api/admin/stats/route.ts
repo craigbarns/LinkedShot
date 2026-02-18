@@ -44,9 +44,9 @@ export async function GET(request: NextRequest) {
       supabase.from("credits").select("*", { count: "exact", head: true }),
     ]);
 
-    const revenueSince = process.env.ADMIN_REVENUE_SINCE_DATE
-      ? new Date(process.env.ADMIN_REVENUE_SINCE_DATE).getTime()
-      : 0;
+    // Ne compter que les ventes à partir de cette date (par défaut 2026-02-19)
+    const revenueSinceDateStr = process.env.ADMIN_REVENUE_SINCE_DATE?.trim() || "2026-02-19";
+    const revenueSince = new Date(revenueSinceDateStr).getTime();
 
     let revenueCents = 0;
     let totalSales = 0;
@@ -83,6 +83,7 @@ export async function GET(request: NextRequest) {
       revenueCents,
       revenueEuros: Math.round((revenueCents / 100) * 100) / 100,
       recentSales,
+      revenueSinceDate: revenueSinceDateStr,
     });
   } catch (e) {
     console.error("Admin stats:", e);
