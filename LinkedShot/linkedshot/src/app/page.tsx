@@ -77,6 +77,12 @@ export default function Home() {
               Dashboard
             </Link>
             <Link
+              href="/blog"
+              className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
+            >
+              Blog
+            </Link>
+            <Link
               href="/#upload"
               className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
             >
@@ -332,6 +338,9 @@ export default function Home() {
                 </li>
                 <li>
                   <Link href="/dashboard">Dashboard</Link>
+                </li>
+                <li>
+                  <Link href="/blog">Blog</Link>
                 </li>
               </ul>
             </div>
