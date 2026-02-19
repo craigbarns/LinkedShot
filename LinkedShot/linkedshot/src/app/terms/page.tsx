@@ -70,7 +70,7 @@ export default function TermsPage() {
             <p>
               Paid plans are charged via Stripe. Credits are consumed when you
               process images. Refunds are handled in accordance with applicable
-              law and our refund policy; contact us at gregory@wemade.fr for
+              law and our refund policy; contact us at contact@linkedshot.com for
               requests.
             </p>
           </section>
@@ -100,7 +100,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-2 font-semibold text-zinc-900">7. Contact</h2>
             <p>
-              For questions about these terms: gregory@wemade.fr. Operator:
+              For questions about these terms: contact@linkedshot.com. Operator:
               WEMADE, 41 rue Fongate, 13006 Marseille, France.
             </p>
           </section>

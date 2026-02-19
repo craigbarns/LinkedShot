@@ -68,7 +68,7 @@ export default function PrivacyPage() {
             <p>
               We retain your account data and processed images for as long as
               your account is active. You may request deletion of your account
-              and associated data by contacting us at gregory@wemade.fr.
+              and associated data by contacting us at contact@linkedshot.com.
             </p>
           </section>
           <section>
@@ -76,14 +76,14 @@ export default function PrivacyPage() {
             <p>
               You have the right to access, correct, or delete your personal
               data, and to object to or restrict certain processing. For
-              requests, contact us at gregory@wemade.fr. If you are in the
+              requests, contact us at contact@linkedshot.com. If you are in the
               EEA, you may also lodge a complaint with your supervisory authority.
             </p>
           </section>
           <section>
             <h2 className="mb-2 font-semibold text-zinc-900">6. Contact</h2>
             <p>
-              For privacy-related questions: gregory@wemade.fr. Operator:
+              For privacy-related questions: contact@linkedshot.com. Operator:
               WEMADE, 41 rue Fongate, 13006 Marseille, France.
             </p>
           </section>

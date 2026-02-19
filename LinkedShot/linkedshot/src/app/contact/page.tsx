@@ -30,10 +30,10 @@ export default function ContactPage() {
             <h2 className="mb-2 font-semibold text-zinc-900">Email</h2>
             <p>
               <a
-                href="mailto:gregory@wemade.fr"
+                href="mailto:contact@linkedshot.com"
                 className="text-blue-600 hover:underline"
               >
-                gregory@wemade.fr
+                contact@linkedshot.com
               </a>
             </p>
             <p className="mt-2 text-zinc-600">
