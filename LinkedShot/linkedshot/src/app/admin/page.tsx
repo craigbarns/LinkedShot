@@ -11,7 +11,19 @@ import {
   TrendingUp,
   LogOut,
   ArrowLeft,
+  Calendar,
+  Eye,
+  Zap,
+  Gift,
 } from "lucide-react";
+
+type DayStat = {
+  date: string;
+  visitors: number;
+  generations: number;
+  freeGenerations: number;
+  activeUsers: number;
+};
 
 type Stats = {
   totalImages: number;
@@ -21,6 +33,7 @@ type Stats = {
   revenueEuros: number;
   recentSales: { date: string; amount: number; plan: string; credits: number }[];
   revenueSinceDate?: string | null;
+  dailyStats?: DayStat[];
 } | null;
 
 export default function AdminPage() {
@@ -167,6 +180,69 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+
+        {stats.dailyStats && stats.dailyStats.length > 0 && (
+          <section className="mb-10 rounded-xl border border-zinc-200 bg-white shadow-sm">
+            <h2 className="flex items-center gap-2 border-b border-zinc-200 px-6 py-4 text-lg font-semibold text-zinc-900">
+              <Calendar className="h-5 w-5 text-zinc-500" />
+              Statistiques journalières (14 derniers jours)
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50">
+                    <th className="px-6 py-3 font-medium text-zinc-700">Date</th>
+                    <th className="px-6 py-3 font-medium text-zinc-700">
+                      <span className="flex items-center gap-1">
+                        <Eye className="h-4 w-4" /> Visiteurs
+                      </span>
+                    </th>
+                    <th className="px-6 py-3 font-medium text-zinc-700">
+                      <span className="flex items-center gap-1">
+                        <Zap className="h-4 w-4" /> Générations
+                      </span>
+                    </th>
+                    <th className="px-6 py-3 font-medium text-zinc-700">
+                      <span className="flex items-center gap-1">
+                        <Gift className="h-4 w-4" /> Générations free
+                      </span>
+                    </th>
+                    <th className="px-6 py-3 font-medium text-zinc-700">Utilisateurs actifs</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...stats.dailyStats].reverse().map((day) => (
+                    <tr
+                      key={day.date}
+                      className="border-b border-zinc-100 hover:bg-zinc-50"
+                    >
+                      <td className="px-6 py-3 font-medium text-zinc-900">
+                        {new Date(day.date + "Z").toLocaleDateString("fr-FR", {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="px-6 py-3 text-zinc-600">
+                        {day.visitors.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-3 text-zinc-600">
+                        {day.generations.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-3 text-zinc-600">
+                        {day.freeGenerations.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-3 text-zinc-600">
+                        {day.activeUsers.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         <section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
           <h2 className="border-b border-zinc-200 px-6 py-4 text-lg font-semibold text-zinc-900">

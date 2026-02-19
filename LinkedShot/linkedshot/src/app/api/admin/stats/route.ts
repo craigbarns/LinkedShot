@@ -39,10 +39,57 @@ export async function GET(request: NextRequest) {
 
     const supabase = createServiceRoleClient();
 
-    const [{ count: totalImages }, { count: totalUsers }] = await Promise.all([
+    const since = new Date();
+    since.setDate(since.getDate() - 14);
+    since.setUTCHours(0, 0, 0, 0);
+    const sinceIso = since.toISOString();
+
+    const [{ count: totalImages }, { count: totalUsers }, visitsRes, jobsRes] = await Promise.all([
       supabase.from("jobs").select("*", { count: "exact", head: true }).eq("status", "done"),
       supabase.from("credits").select("*", { count: "exact", head: true }),
+      supabase.from("visits").select("created_at").gte("created_at", sinceIso),
+      supabase
+        .from("jobs")
+        .select("created_at, used_free_credit, user_id")
+        .eq("status", "done")
+        .gte("created_at", sinceIso),
     ]);
+
+    type DayRow = { date: string; visitors: number; generations: number; freeGenerations: number; activeUsers: number };
+    const dayMap = new Map<string, { visitors: number; generations: number; freeGenerations: number; userIds: Set<string> }>();
+
+    for (let d = 0; d < 14; d++) {
+      const dte = new Date(since);
+      dte.setDate(dte.getDate() + d);
+      const key = dte.toISOString().slice(0, 10);
+      dayMap.set(key, { visitors: 0, generations: 0, freeGenerations: 0, userIds: new Set() });
+    }
+
+    for (const v of visitsRes.data ?? []) {
+      const key = (v.created_at as string).slice(0, 10);
+      const row = dayMap.get(key);
+      if (row) row.visitors += 1;
+    }
+
+    for (const j of jobsRes.data ?? []) {
+      const key = (j.created_at as string).slice(0, 10);
+      const row = dayMap.get(key);
+      if (row) {
+        row.generations += 1;
+        if ((j as { used_free_credit?: boolean }).used_free_credit) row.freeGenerations += 1;
+        if (j.user_id) row.userIds.add(j.user_id);
+      }
+    }
+
+    const dailyStats: DayRow[] = Array.from(dayMap.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([date, row]) => ({
+        date,
+        visitors: row.visitors,
+        generations: row.generations,
+        freeGenerations: row.freeGenerations,
+        activeUsers: row.userIds.size,
+      }));
 
     // Ne compter que les ventes à partir de cette date (par défaut 2026-02-19)
     const revenueSinceDateStr = process.env.ADMIN_REVENUE_SINCE_DATE?.trim() || "2026-02-19";
@@ -84,6 +131,7 @@ export async function GET(request: NextRequest) {
       revenueEuros: Math.round((revenueCents / 100) * 100) / 100,
       recentSales,
       revenueSinceDate: revenueSinceDateStr,
+      dailyStats,
     });
   } catch (e) {
     console.error("Admin stats:", e);
