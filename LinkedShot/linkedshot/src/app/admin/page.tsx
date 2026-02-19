@@ -217,12 +217,17 @@ export default function AdminPage() {
                       className="border-b border-zinc-100 hover:bg-zinc-50"
                     >
                       <td className="px-6 py-3 font-medium text-zinc-900">
-                        {new Date(day.date + "Z").toLocaleDateString("fr-FR", {
-                          weekday: "short",
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {(() => {
+                          const d = new Date(day.date + "T12:00:00.000Z");
+                          return isNaN(d.getTime())
+                            ? day.date
+                            : d.toLocaleDateString("fr-FR", {
+                                weekday: "short",
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              });
+                        })()}
                       </td>
                       <td className="px-6 py-3 text-zinc-600">
                         {day.visitors.toLocaleString()}
