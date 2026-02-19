@@ -10,6 +10,7 @@ import {
   ImageIcon,
   CreditCard,
   LogOut,
+  FileText,
 } from "lucide-react";
 
 interface Job {
@@ -20,12 +21,22 @@ interface Job {
   created_at: string;
 }
 
+interface Invoice {
+  id: string;
+  date: string;
+  amount: number;
+  currency: string;
+  plan: string;
+  receipt_url: string | null;
+}
+
 function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<{ id: string } | null>(null);
   const [credits, setCredits] = useState(0);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const checkoutSuccess = searchParams.get("checkout") === "success";
@@ -58,6 +69,12 @@ function DashboardContent() {
         .limit(10);
 
       if (jobsData) setJobs(jobsData);
+
+      const invRes = await fetch("/api/invoices", { credentials: "include" });
+      if (invRes.ok) {
+        const { invoices: invData } = await invRes.json();
+        setInvoices(invData ?? []);
+      }
     } catch (err) {
       console.error(err);
       router.push("/");
@@ -264,6 +281,64 @@ function DashboardContent() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        <h2 className="mb-4 mt-12 text-lg font-semibold text-zinc-900">
+          Invoices & receipts
+        </h2>
+        {invoices.length === 0 ? (
+          <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+            <FileText className="mx-auto mb-3 h-10 w-10 text-zinc-300" />
+            <p>No invoices yet</p>
+            <p className="mt-1 text-sm">
+              Your receipts will appear here after a purchase.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50">
+                  <th className="px-6 py-3 font-medium text-zinc-700">Date</th>
+                  <th className="px-6 py-3 font-medium text-zinc-700">Amount</th>
+                  <th className="px-6 py-3 font-medium text-zinc-700">Plan</th>
+                  <th className="px-6 py-3 font-medium text-zinc-700">Receipt</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map((inv) => (
+                  <tr
+                    key={inv.id}
+                    className="border-b border-zinc-100 hover:bg-zinc-50"
+                  >
+                    <td className="px-6 py-3 text-zinc-600">{inv.date}</td>
+                    <td className="px-6 py-3 font-medium text-zinc-900">
+                      {inv.currency === "USD"
+                        ? `$${inv.amount.toFixed(2)}`
+                        : `€${inv.amount.toFixed(2)}`}
+                    </td>
+                    <td className="px-6 py-3 text-zinc-600 capitalize">
+                      {inv.plan}
+                    </td>
+                    <td className="px-6 py-3">
+                      {inv.receipt_url ? (
+                        <a
+                          href={inv.receipt_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-600 hover:underline"
+                        >
+                          View receipt
+                        </a>
+                      ) : (
+                        <span className="text-zinc-400">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

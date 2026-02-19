@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
 export default function ConfigBanner() {
-  const [configured, setConfigured] = useState(true);
-
-  useEffect(() => {
-    setConfigured(isSupabaseConfigured());
-  }, []);
+  const [configured] = useState(() => isSupabaseConfigured());
 
   if (configured) return null;
 

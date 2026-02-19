@@ -1,11 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClient } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import Link from "next/link";
+
+function getSupabaseAndError(): {
+  supabase: SupabaseClient | null;
+  configError: string | null;
+} {
+  try {
+    return { supabase: createClient(), configError: null };
+  } catch (err) {
+    return {
+      supabase: null,
+      configError:
+        err instanceof Error ? err.message : "Supabase not configured.",
+    };
+  }
+}
 
 function GoogleIcon() {
   return (
@@ -31,20 +46,8 @@ function GoogleIcon() {
 }
 
 export default function LoginPage() {
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
-  const [configError, setConfigError] = useState<string | null>(null);
+  const [{ supabase, configError }] = useState(getSupabaseAndError);
   const [showEmailLink, setShowEmailLink] = useState(false);
-
-  useEffect(() => {
-    try {
-      setSupabase(createClient());
-    } catch (err) {
-      setSupabase(null);
-        setConfigError(
-        err instanceof Error ? err.message : "Supabase not configured."
-      );
-    }
-  }, []);
 
   const redirectTo =
     typeof window !== "undefined"
