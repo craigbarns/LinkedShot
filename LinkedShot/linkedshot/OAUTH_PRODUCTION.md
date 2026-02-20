@@ -1,4 +1,16 @@
-# OAuth Google en production
+# OAuth Google (local + production)
+
+## Connexion en local
+
+Si tu n’arrives pas à te connecter **en local** (http://localhost:3000) :
+
+1. **Supabase** → **Authentication** → **URL Configuration** → **Redirect URLs**
+2. Ajoute : `http://localhost:3000/auth/callback` (et si besoin `http://127.0.0.1:3000/auth/callback`)
+3. **Ne mets pas** `NEXT_PUBLIC_SITE_URL` en local, ou laisse-le commenté : l’app utilise automatiquement l’URL de la page (localhost en dev, ton domaine en prod).
+
+---
+
+## Connexion en production
 
 Si **« Continue with Google »** ne fonctionne pas sur le site en ligne, c’est en général parce que l’URL de redirection n’est pas autorisée dans Supabase.
 

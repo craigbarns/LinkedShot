@@ -41,18 +41,14 @@ export async function GET(request: NextRequest) {
       createdAt &&
       Date.now() - new Date(createdAt).getTime() < NEW_USER_MAX_AGE_MS
     ) {
-      try {
-        await fetch(`${origin}/api/webhooks/new-user`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${secret}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        });
-      } catch {
-        // non-blocking: don't fail redirect if notify fails
-      }
+      void fetch(`${origin}/api/webhooks/new-user`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${secret}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      }).catch(() => {});
     }
 
     return response;

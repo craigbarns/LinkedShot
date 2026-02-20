@@ -85,6 +85,7 @@ function DashboardContent() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

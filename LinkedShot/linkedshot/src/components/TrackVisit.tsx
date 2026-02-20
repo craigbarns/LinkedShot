@@ -9,9 +9,9 @@ export function TrackVisit() {
     if (typeof window === "undefined") return;
     try {
       if (sessionStorage.getItem(VISIT_KEY)) return;
-      fetch("/api/track-visit", { method: "POST", credentials: "include" }).then(
-        () => sessionStorage.setItem(VISIT_KEY, "1")
-      );
+      fetch("/api/track-visit", { method: "POST", credentials: "include" })
+        .then(() => sessionStorage.setItem(VISIT_KEY, "1"))
+        .catch(() => {});
     } catch {
       // ignore
     }

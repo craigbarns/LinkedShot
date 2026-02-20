@@ -63,7 +63,7 @@ const password = "Linkedshot2302";
 const supabase = createClient(url, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
 
 async function main() {
-  const { data, error } = await supabase.auth.admin.createUser({
+  const { error } = await supabase.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
