@@ -12,6 +12,7 @@ export const metadata: Metadata = {
       "Fiverr ($5/image), Photoshop (hours), or AI ($0.18/image)? Honest comparison for Amazon product photography. Best for bulk editing?",
     type: "article",
   },
+  alternates: { canonical: "/blog/fiverr-vs-software-vs-ai-amazon-photos" },
 };
 
 export default function Page() {

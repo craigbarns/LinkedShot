@@ -12,6 +12,7 @@ export const metadata: Metadata = {
       "Professional Amazon photos without hiring a photographer. DIY setup vs AI tools. Get studio-quality white backgrounds from supplier photos.",
     type: "article",
   },
+  alternates: { canonical: "/blog/amazon-product-photography-without-photographer" },
 };
 
 export default function Page() {

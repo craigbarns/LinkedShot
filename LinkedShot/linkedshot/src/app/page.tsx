@@ -6,6 +6,8 @@ import Pricing from "@/components/Pricing";
 import ConfigBanner from "@/components/ConfigBanner";
 import HeroSection from "@/components/HeroSection";
 import StickyCta from "@/components/StickyCta";
+import NavLinks from "@/components/NavLinks";
+import DashboardLinkIfAuth from "@/components/DashboardLinkIfAuth";
 import type { PricingPlan } from "@/types";
 
 const FAQ_ITEMS = [
@@ -63,32 +65,7 @@ export default function Home() {
           >
             LinkedShot
           </Link>
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/blog"
-              className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/#upload"
-              className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
-            >
-              Get Started
-            </Link>
-          </nav>
+          <NavLinks />
         </div>
       </header>
 
@@ -336,9 +313,7 @@ export default function Home() {
                 <li>
                   <Link href="/#pricing">Pricing</Link>
                 </li>
-                <li>
-                  <Link href="/dashboard">Dashboard</Link>
-                </li>
+                <DashboardLinkIfAuth />
                 <li>
                   <Link href="/blog">Blog</Link>
                 </li>

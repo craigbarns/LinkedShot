@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Terms of Service",
   description: "LinkedShot terms of service and use.",
+  openGraph: {
+    title: "Terms of Service | LinkedShot",
+    description: "LinkedShot terms of service and use.",
+    type: "website",
+  },
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {

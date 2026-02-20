@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     description: "Guides for Amazon image requirements, DIY photography, and AI tools.",
     type: "website",
   },
+  alternates: { canonical: "/blog" },
 };
 
 const SLUG_TO_SUMMARY: Record<string, string> = {

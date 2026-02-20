@@ -12,6 +12,7 @@ export const metadata: Metadata = {
       "Complete guide to Amazon image requirements 2024: size, pure white background (#FFFFFF), shadows, and formats. Avoid listing suppression.",
     type: "article",
   },
+  alternates: { canonical: "/blog/amazon-photo-requirements-2024" },
 };
 
 export default function Page() {

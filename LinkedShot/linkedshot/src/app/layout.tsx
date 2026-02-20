@@ -24,16 +24,6 @@ export const metadata: Metadata = {
   },
   description:
     "Turn supplier photos into Amazon-compliant white background images in seconds. 3 free credits, no Photoshop. HD PNG, €0.18/image. Used by Amazon sellers.",
-  keywords: [
-    "Amazon product photos",
-    "white background image",
-    "remove background",
-    "Amazon listing images",
-    "product photography",
-    "Amazon FBA",
-    "packshot",
-    "AI background removal",
-  ],
   authors: [{ name: "LinkedShot", url: siteUrl }],
   creator: "LinkedShot",
   openGraph: {

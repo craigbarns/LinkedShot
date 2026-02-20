@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "LinkedShot privacy policy and personal data handling.",
+  openGraph: {
+    title: "Privacy Policy | LinkedShot",
+    description: "LinkedShot privacy policy and personal data handling.",
+    type: "website",
+  },
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

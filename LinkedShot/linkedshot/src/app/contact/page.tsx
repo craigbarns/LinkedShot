@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Contact Us",
   description: "Contact LinkedShot and company information.",
+  openGraph: {
+    title: "Contact Us | LinkedShot",
+    description: "Contact LinkedShot and company information.",
+    type: "website",
+  },
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {
