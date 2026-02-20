@@ -34,6 +34,15 @@ Sans ces variables, la page **/admin/login** affiche « Admin login not configur
 | `NEXT_PUBLIC_ADMIN_EMAIL` | Même email : utilisé pour la connexion « ADMIN » sur /admin/login |
 | `ADMIN_REVENUE_SINCE_DATE` | Optionnel. Ne compter que les ventes à partir de cette date (YYYY-MM-DD). Ex. `2026-02-19` pour masquer les anciens revenus. |
 
+## Email : nouveau compte → gregory@linkedshot.com
+
+Quand un client crée un compte (Google), un email est envoyé à **gregory@linkedshot.com** via Resend.
+
+| Nom | Description |
+|-----|-------------|
+| `RESEND_API_KEY` | Clé API Resend (re_...) |
+| `NEW_USER_WEBHOOK_SECRET` | Secret partagé pour sécuriser l’appel interne (une chaîne aléatoire, même valeur en local et sur Vercel). |
+
 ---
 
 ## Liste à copier-coller (noms uniquement)
@@ -50,6 +59,8 @@ NEXT_PUBLIC_SITE_URL
 ADMIN_EMAIL
 NEXT_PUBLIC_ADMIN_EMAIL
 ADMIN_REVENUE_SINCE_DATE
+RESEND_API_KEY
+NEW_USER_WEBHOOK_SECRET
 ```
 
 **Admin :** Crée dans Supabase (Authentication → Users → Add user) un utilisateur avec l’email `admin@linkedshot.com` (ou celui que tu mets dans ADMIN_EMAIL) et le mot de passe de ton choix (ex. Linkedshot2302). Ensuite connecte-toi sur **/admin/login** avec user **ADMIN** et ce mot de passe.
