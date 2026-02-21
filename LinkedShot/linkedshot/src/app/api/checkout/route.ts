@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { getStripe, PLANS, type PlanId } from "@/lib/stripe";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+function getBaseUrl(request: NextRequest): string {
+  try {
+    const url = new URL(request.url);
+    if (url.origin && url.origin !== "null") return url.origin;
+  } catch {}
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+}
 
 export async function POST(request: NextRequest) {
   const response = NextResponse.next();
@@ -46,6 +52,7 @@ export async function POST(request: NextRequest) {
 
     const plan = PLANS[planId as PlanId];
     const currency = preferredCurrency === "usd" ? "usd" : "eur";
+    const baseUrl = getBaseUrl(request);
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],

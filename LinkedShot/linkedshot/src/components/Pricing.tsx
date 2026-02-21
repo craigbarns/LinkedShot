@@ -34,7 +34,7 @@ export default function Pricing({ plans }: PricingProps) {
           currency: locale?.currency ?? "eur",
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         if (res.status === 401) {
           window.location.href = "/login?redirect=" + encodeURIComponent("/#pricing");
@@ -44,6 +44,9 @@ export default function Pricing({ plans }: PricingProps) {
       }
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        console.error("Checkout: no URL in response", data);
+        alert("Payment link could not be created. Please try again or contact support.");
       }
     } catch (e) {
       console.error(e);
