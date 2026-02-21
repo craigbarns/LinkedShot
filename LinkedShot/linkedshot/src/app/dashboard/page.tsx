@@ -88,6 +88,26 @@ function DashboardContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
+  // Envoyer l’événement "purchase" à Google Analytics / Google Ads après paiement
+  useEffect(() => {
+    if (!checkoutSuccess || typeof window === "undefined") return;
+    const sessionId = searchParams.get("session_id");
+    const value = searchParams.get("value");
+    const currency = (searchParams.get("currency") || "eur").toUpperCase();
+    if (!sessionId || !value) return;
+    const sentKey = `linkedshot_purchase_${sessionId}`;
+    if (sessionStorage.getItem(sentKey)) return;
+    sessionStorage.setItem(sentKey, "1");
+    const numValue = parseFloat(value);
+    if (typeof (window as unknown as { gtag?: (a: string, b: string, c: object) => void }).gtag === "function") {
+      (window as unknown as { gtag: (a: string, b: string, c: object) => void }).gtag("event", "purchase", {
+        currency,
+        value: numValue,
+        transaction_id: sessionId,
+      });
+    }
+  }, [checkoutSuccess, searchParams]);
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;

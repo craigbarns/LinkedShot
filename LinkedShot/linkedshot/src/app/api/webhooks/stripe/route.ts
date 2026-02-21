@@ -54,31 +54,27 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createServiceRoleClient();
-    const { data: row, error: fetchError } = await supabase
+    const { data: row } = await supabase
       .from("credits")
       .select("amount")
       .eq("user_id", userId)
       .single();
 
-    if (fetchError || !row) {
-      console.error("Webhook: credits row not found for user", userId, fetchError);
-      return NextResponse.json(
-        { error: "User credits not found" },
-        { status: 500 }
-      );
-    }
-
-    const newAmount = row.amount + creditsToAdd;
-    const { error: updateError } = await supabase
+    const currentAmount = row?.amount ?? 0;
+    const newAmount = currentAmount + creditsToAdd;
+    const { error: upsertError } = await supabase
       .from("credits")
-      .update({
-        amount: newAmount,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", userId);
+      .upsert(
+        {
+          user_id: userId,
+          amount: newAmount,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      );
 
-    if (updateError) {
-      console.error("Webhook: failed to update credits", updateError);
+    if (upsertError) {
+      console.error("Webhook: failed to add credits", upsertError);
       return NextResponse.json(
         { error: "Failed to add credits" },
         { status: 500 }

@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
           },
         },
       ],
-      success_url: `${baseUrl}/dashboard?checkout=success`,
+      success_url: `${baseUrl}/dashboard?checkout=success&session_id={CHECKOUT_SESSION_ID}&value=${plan.priceCents / 100}&currency=${currency}`,
       cancel_url: `${baseUrl}/#pricing`,
     });
 
