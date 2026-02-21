@@ -44,6 +44,7 @@ function SignInWithGoogleButton() {
 
 export default function UploadZone() {
   const [processing, setProcessing] = useState(false);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -182,6 +183,40 @@ export default function UploadZone() {
     );
   }
 
+  const handleUpgradeStarter = async () => {
+    setUpgradeLoading(true);
+    try {
+      const localeRes = await fetch("/api/locale", { credentials: "include" });
+      const localeData = localeRes.ok ? await localeRes.json() : { currency: "eur" };
+      const currency = localeData.currency === "usd" ? "usd" : "eur";
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId: "starter", currency }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (res.status === 401) {
+          window.location.href = "/login?redirect=" + encodeURIComponent(window.location.pathname + "#upload");
+          return;
+        }
+        alert(data.error || "Checkout failed");
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Payment link could not be created. Please try again or contact support.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert(e instanceof Error ? e.message : "Checkout failed");
+    } finally {
+      setUpgradeLoading(false);
+    }
+  };
+
   if (credits === 0 && !result) {
     return (
       <div className="py-12 text-center">
@@ -193,12 +228,14 @@ export default function UploadZone() {
           Ready to process your entire catalog?
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Link
-            href="/#pricing"
-            className="rounded-lg bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800"
+          <button
+            type="button"
+            onClick={handleUpgradeStarter}
+            disabled={upgradeLoading}
+            className="rounded-lg bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800 disabled:opacity-70"
           >
-            Upgrade to Starter (9€ or $9)
-          </Link>
+            {upgradeLoading ? "Redirecting…" : "Upgrade to Starter (9€ or $9)"}
+          </button>
         </div>
         <p className="mt-4 text-sm text-gray-500">
           50 images • ~€0.18 per image
@@ -295,12 +332,14 @@ export default function UploadZone() {
           <p className="mb-4 text-sm text-zinc-600">
             Ready to process more? Upgrade to Starter for 50 images.
           </p>
-          <Link
-            href="/#pricing"
-            className="inline-block rounded-lg bg-black px-6 py-2.5 font-semibold text-white hover:bg-zinc-800"
+          <button
+            type="button"
+            onClick={handleUpgradeStarter}
+            disabled={upgradeLoading}
+            className="inline-block rounded-lg bg-black px-6 py-2.5 font-semibold text-white hover:bg-zinc-800 disabled:opacity-70"
           >
-            Upgrade to Starter (9€ or $9)
-          </Link>
+            {upgradeLoading ? "Redirecting…" : "Upgrade to Starter (9€ or $9)"}
+          </button>
         </div>
       )}
     </div>
