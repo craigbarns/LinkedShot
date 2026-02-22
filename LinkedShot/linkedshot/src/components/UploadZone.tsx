@@ -96,7 +96,8 @@ export default function UploadZone() {
 
       try {
         const supabase = createClient();
-        const filePath = `${user.id}/${Date.now()}-${file.name}`;
+        const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : ".jpg";
+        const filePath = `${user.id}/${Date.now()}${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("raw")
           .upload(filePath, file);
