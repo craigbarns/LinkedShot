@@ -159,31 +159,17 @@ function DashboardContent() {
     setUploading(true);
 
     try {
-      const supabase = createClient();
-      const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : ".jpg";
-      const filePath = `${user.id}/${Date.now()}${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("raw")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("raw")
-        .getPublicUrl(filePath);
-      const publicUrl = urlData.publicUrl;
-
-      const res = await fetch("/api/process", {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await fetch("/api/upload-and-process", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: publicUrl }),
+        body: formData,
       });
 
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        const msg = data.error || `Error ${res.status}`;
-        alert(msg);
+        alert(data.error || `Error ${res.status}`);
         return;
       }
 
@@ -191,8 +177,7 @@ function DashboardContent() {
       alert("Image processed! Check your history below.");
     } catch (error) {
       console.error(error);
-      const msg = error instanceof Error ? error.message : "Upload failed";
-      alert(msg);
+      alert(error instanceof Error ? error.message : "Upload failed");
     } finally {
       setUploading(false);
     }
