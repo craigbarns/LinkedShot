@@ -4,6 +4,7 @@ import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
+import { track } from "@/lib/analytics";
 import type { User } from "@supabase/supabase-js";
 
 function GoogleIcon() {
@@ -57,9 +58,15 @@ export default function UploadZone() {
   const [credits, setCredits] = useState<number>(0);
   const [configError, setConfigError] = useState<string | null>(null);
   const [queue, setQueue] = useState<File[] | null>(null);
-  const [bulkResults, setBulkResults] = useState<{ original: string; resultUrl: string }[]>([]);
+  const [bulkResults, setBulkResults] = useState<
+    { original: string; resultUrl?: string; error?: string }[]
+  >([]);
   const [bulkIndex, setBulkIndex] = useState(0);
   const [bulkTotal, setBulkTotal] = useState(0);
+  const [zipLoading, setZipLoading] = useState(false);
+  const [anonymousResult, setAnonymousResult] = useState<string | null>(null);
+  const [anonymousProcessing, setAnonymousProcessing] = useState(false);
+  const [anonymousError, setAnonymousError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!processing) {
@@ -98,17 +105,9 @@ export default function UploadZone() {
     checkUser();
   }, []);
 
-  const processOneFile = useCallback(
-    async (file: File): Promise<{ original: string; resultUrl: string }> => {
+  const processFromUrl = useCallback(
+    async (imageUrl: string): Promise<string> => {
       const supabase = createClient();
-      const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : ".jpg";
-      const filePath = `${user!.id}/${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("raw")
-        .upload(filePath, file);
-      if (uploadError) throw uploadError;
-      const { data: urlData } = supabase.storage.from("raw").getPublicUrl(filePath);
-      const publicUrl = urlData.publicUrl;
       const session = await supabase.auth.getSession();
       const token = session.data.session?.access_token;
       const response = await fetch("/api/process", {
@@ -118,15 +117,37 @@ export default function UploadZone() {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-        body: JSON.stringify({ imageUrl: publicUrl, mode }),
+        body: JSON.stringify({ imageUrl, mode }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Processing error");
       const resultUrl = data.resultUrl ?? data.processedUrl;
       if (!resultUrl) throw new Error(data.error || "No result");
+      return resultUrl;
+    },
+    [mode]
+  );
+
+  const uploadAndGetUrl = useCallback(
+    async (file: File): Promise<string> => {
+      const supabase = createClient();
+      const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : ".jpg";
+      const filePath = `${user!.id}/${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`;
+      const { error: uploadError } = await supabase.storage.from("raw").upload(filePath, file);
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from("raw").getPublicUrl(filePath);
+      return urlData.publicUrl;
+    },
+    [user]
+  );
+
+  const processOneFile = useCallback(
+    async (file: File): Promise<{ original: string; resultUrl: string }> => {
+      const publicUrl = await uploadAndGetUrl(file);
+      const resultUrl = await processFromUrl(publicUrl);
       return { original: publicUrl, resultUrl };
     },
-    [user, mode]
+    [uploadAndGetUrl, processFromUrl]
   );
 
   const onDrop = useCallback(
@@ -135,19 +156,25 @@ export default function UploadZone() {
       const files = acceptedFiles.slice(0, MAX_BULK);
       if (files.length === 0) return;
 
+      track("upload_started", { count: files.length });
+      track("job_created", { mode, nb_images: files.length });
+
       if (files.length === 1) {
         setProcessing(true);
         setResult(null);
         setOriginal(null);
         setQueue(null);
         setBulkResults([]);
+        const start = Date.now();
         try {
           const { original: o, resultUrl: r } = await processOneFile(files[0]);
           setOriginal(o);
           setResult(r);
           setCredits((c) => Math.max(0, c - 1));
+          track("job_succeeded", { mode, duration_ms: Date.now() - start });
         } catch (error) {
           console.error(error);
+          track("job_failed", { mode, duration_ms: Date.now() - start });
           const msg = error instanceof Error ? error.message : "Something went wrong. Please try again.";
           alert(msg);
         } finally {
@@ -160,36 +187,141 @@ export default function UploadZone() {
       setBulkResults([]);
       setBulkIndex(0);
     },
-    [user, credits, processOneFile]
+    [user, credits, processOneFile, mode]
   );
 
   const startBulkProcess = useCallback(async () => {
-    if (!queue || queue.length === 0 || !user) return;
+    if (!queue || queue.length === 0 || !user || processing) return;
     if (credits < queue.length) {
       alert(`Not enough credits: you have ${credits}, need ${queue.length}. Upgrade or select fewer images.`);
       return;
     }
+    track("bulk_process_all_clicked", { N: queue.length });
     setProcessing(true);
     const files = [...queue];
     setBulkTotal(files.length);
     setQueue(null);
-    const results: { original: string; resultUrl: string }[] = [];
-    try {
-      for (let i = 0; i < files.length; i++) {
-        setBulkIndex(i + 1);
-        const one = await processOneFile(files[i]);
-        results.push(one);
+    const results: { original: string; resultUrl?: string; error?: string }[] = [];
+    for (let i = 0; i < files.length; i++) {
+      setBulkIndex(i + 1);
+      let publicUrl: string;
+      try {
+        publicUrl = await uploadAndGetUrl(files[i]);
+      } catch (e) {
+        results.push({ original: "", error: "Upload failed" });
         setBulkResults([...results]);
-        setCredits((c) => Math.max(0, c - 1));
+        continue;
       }
-    } catch (error) {
-      console.error(error);
-      alert(error instanceof Error ? error.message : "Bulk processing stopped.");
-    } finally {
-      setProcessing(false);
-      setBulkIndex(0);
+      const start = Date.now();
+      try {
+        const resultUrl = await processFromUrl(publicUrl);
+        results.push({ original: publicUrl, resultUrl });
+        setCredits((c) => Math.max(0, c - 1));
+        track("job_succeeded", { mode, duration_ms: Date.now() - start });
+      } catch (error) {
+        track("job_failed", { mode, duration_ms: Date.now() - start });
+        results.push({
+          original: publicUrl,
+          error: error instanceof Error ? error.message : "Processing failed",
+        });
+      }
+      setBulkResults([...results]);
     }
-  }, [queue, user, credits, processOneFile]);
+    setProcessing(false);
+    setBulkIndex(0);
+  }, [queue, user, credits, processing, uploadAndGetUrl, processFromUrl]);
+
+  const downloadZip = useCallback(async () => {
+    const successUrls = bulkResults
+      .map((r) => r.resultUrl)
+      .filter((u): u is string => !!u);
+    if (successUrls.length < 2) return;
+    setZipLoading(true);
+    try {
+      const res = await fetch("/api/download-zip", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ urls: successUrls }),
+      });
+      if (!res.ok) throw new Error("ZIP failed");
+      const blob = await res.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "linkedshot-images.zip";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e) {
+      console.error(e);
+      alert("Could not create ZIP. Try downloading images one by one.");
+    } finally {
+      setZipLoading(false);
+    }
+  }, [bulkResults]);
+
+  const retryBulkIndex = useCallback(
+    async (index: number) => {
+      const item = bulkResults[index];
+      if (!item?.original || !item.error || credits <= 0) return;
+      setProcessing(true);
+      try {
+        const resultUrl = await processFromUrl(item.original);
+        const next = [...bulkResults];
+        next[index] = { original: item.original, resultUrl };
+        setBulkResults(next);
+        setCredits((c) => Math.max(0, c - 1));
+      } catch (error) {
+        const next = [...bulkResults];
+        next[index] = {
+          ...item,
+          error: error instanceof Error ? error.message : "Retry failed",
+        };
+        setBulkResults(next);
+      } finally {
+        setProcessing(false);
+      }
+    },
+    [bulkResults, credits, processFromUrl]
+  );
+
+  const onAnonymousDrop = useCallback(async (files: File[]) => {
+    const file = files[0];
+    if (!file) return;
+    setAnonymousError(null);
+    setAnonymousProcessing(true);
+    setAnonymousResult(null);
+    track("upload_started", { count: 1 });
+    track("job_created", { mode: "amazon", nb_images: 1 });
+    try {
+      const form = new FormData();
+      form.append("image", file);
+      const res = await fetch("/api/process-anonymous", {
+        method: "POST",
+        credentials: "include",
+        body: form,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (res.status === 403) {
+          setAnonymousError("used");
+        } else {
+          setAnonymousError(data.error || "Processing failed");
+        }
+        return;
+      }
+      const url = data.resultUrl ?? data.processedUrl;
+      if (url) {
+        setAnonymousResult(url);
+        track("job_succeeded", { mode: "amazon" });
+      } else {
+        setAnonymousError(data.error || "No result");
+      }
+    } catch (e) {
+      setAnonymousError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setAnonymousProcessing(false);
+    }
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -197,6 +329,14 @@ export default function UploadZone() {
     maxFiles: MAX_BULK,
     maxSize: 5 * 1024 * 1024,
     disabled: !user || credits <= 0 || processing,
+  });
+
+  const { getRootProps: getAnonRootProps, getInputProps: getAnonInputProps } = useDropzone({
+    onDrop: onAnonymousDrop,
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
+    maxFiles: 1,
+    maxSize: 5 * 1024 * 1024,
+    disabled: anonymousProcessing,
   });
 
   if (configError) {
@@ -212,20 +352,82 @@ export default function UploadZone() {
   }
 
   if (!user) {
+    if (anonymousResult) {
+      return (
+        <div className="space-y-6 rounded-xl border-2 border-zinc-200 bg-gray-50 p-8">
+          <p className="text-center text-lg font-semibold text-zinc-800">Your result (white background)</p>
+          <div className="mx-auto flex max-w-sm justify-center rounded-lg border border-zinc-200 bg-white p-2">
+            <img src={anonymousResult} alt="Processed" className="max-h-80 w-full object-contain" />
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href={anonymousResult}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg bg-zinc-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"
+            >
+              Download HD
+            </a>
+            <div className="w-full text-center">
+              <p className="mb-3 text-sm font-medium text-zinc-700">
+                Create an account to get 2 more free images (3 total).
+              </p>
+              <SignInWithGoogleButton />
+              <p className="mt-2 text-sm text-zinc-500">
+                or <Link href="/login" className="underline hover:text-zinc-700">other sign-in options</Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (anonymousError === "used") {
+      return (
+        <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-gray-50 p-8 text-center">
+          <p className="mb-1 text-lg font-semibold text-zinc-800">
+            You&apos;ve used your 1 free image
+          </p>
+          <p className="mb-6 text-sm text-zinc-600">
+            Create an account to get 2 more free images (3 total). No credit card.
+          </p>
+          <SignInWithGoogleButton />
+          <p className="mt-3 text-sm text-zinc-500">
+            or <Link href="/login" className="underline hover:text-zinc-700">other sign-in options</Link>
+          </p>
+        </div>
+      );
+    }
+
     return (
       <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-gray-50 p-8 text-center">
         <p className="mb-1 text-lg font-semibold text-zinc-800">
-          Get your 3 free images — no credit card
+          Try 1 free image (no account)
         </p>
         <p className="mb-6 text-sm text-zinc-600">
-          Sign in once, then upload and download. Takes about 10 seconds.
+          Drag an image below. We&apos;ll remove the background. Then create an account to get 2 more free.
         </p>
-        <SignInWithGoogleButton />
-        <p className="mt-3 text-sm text-zinc-500">
-            or{" "}
-            <Link href="/login" className="underline hover:text-zinc-700">
-              other sign-in options
-            </Link>
+        <div
+          {...getAnonRootProps()}
+          className="cursor-pointer rounded-xl border-2 border-dashed border-zinc-400 bg-white p-10 transition-colors hover:border-emerald-400 hover:bg-emerald-50/50"
+        >
+          <input {...getAnonInputProps()} />
+          {anonymousProcessing ? (
+            <p className="font-medium text-blue-600">Processing your image… (~3 s)</p>
+          ) : (
+            <>
+              <p className="mb-1 font-medium text-zinc-700">Drop an image here or click</p>
+              <p className="text-sm text-zinc-500">JPG, PNG, WebP (max 5 MB)</p>
+            </>
+          )}
+        </div>
+        {anonymousError && anonymousError !== "used" && (
+          <p className="mt-3 text-sm text-amber-600">{anonymousError}</p>
+        )}
+        <p className="mt-6 text-sm text-zinc-500">
+          Already have an account?{" "}
+          <Link href="/login" className="underline hover:text-zinc-700">Sign in</Link>
         </p>
       </div>
     );
@@ -348,11 +550,19 @@ export default function UploadZone() {
           <div className="font-medium text-blue-600">
             <p>{bulkTotal > 0 ? `Processing image ${bulkIndex} of ${bulkTotal}…` : "AI processing your image…"}</p>
             <p className="mt-1 text-sm font-normal text-zinc-500">
-              ~3 seconds • {processingSeconds}s
+              ~3 s/image • {processingSeconds}s elapsed
+              {bulkTotal > 0 && bulkIndex < bulkTotal && (
+                <> · ~{Math.max(0, (bulkTotal - bulkIndex) * 4)}s remaining</>
+              )}
             </p>
-            {processingSeconds >= 8 && (
+            {processingSeconds >= 8 && processingSeconds < 20 && (
               <p className="mt-2 text-sm text-amber-600">
                 This one is taking longer — we&apos;re still working on it.
+              </p>
+            )}
+            {processingSeconds >= 20 && (
+              <p className="mt-2 text-sm text-amber-600">
+                Still working… You can leave this tab; results will be in your dashboard.
               </p>
             )}
           </div>
@@ -395,48 +605,86 @@ export default function UploadZone() {
               Cancel
             </button>
           </div>
+          <p className="mt-3 text-xs text-zinc-500">
+            Cancel stops remaining jobs (already processed images stay available).
+          </p>
         </div>
       )}
 
       {bulkResults.length > 0 && !processing && (
         <div className="mt-8 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-lg font-semibold text-zinc-800">
               Bulk results ({bulkResults.length} image{bulkResults.length > 1 ? "s" : ""})
             </h3>
-            <button
-              type="button"
-              onClick={() => {
-                setBulkResults([]);
-                setOriginal(null);
-                setResult(null);
-              }}
-              className="rounded-lg border-2 border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
-            >
-              Process more
-            </button>
+            <div className="flex flex-wrap gap-2">
+              {bulkResults.filter((r) => r.resultUrl).length >= 2 && (
+                <button
+                  type="button"
+                  onClick={downloadZip}
+                  disabled={zipLoading}
+                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-70"
+                >
+                  {zipLoading ? "Creating ZIP…" : "Download ZIP"}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setBulkResults([]);
+                  setOriginal(null);
+                  setResult(null);
+                }}
+                className="rounded-lg border-2 border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+              >
+                Process more
+              </button>
+            </div>
           </div>
+          <p className="mb-4 text-xs text-zinc-500">
+            Results are also saved in your dashboard.
+          </p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {bulkResults.map((item, idx) => (
               <div key={idx} className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
-                <div className={`mb-2 flex aspect-square items-center justify-center overflow-hidden rounded border border-zinc-100 ${mode === "amazon" ? "bg-white" : "bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#f5f5f5_0%_50%)_50%_/16px_16px]"}`}>
-                  <img src={item.resultUrl} alt={`Result ${idx + 1}`} className="max-h-full max-w-full object-contain" />
-                </div>
-                <div className="flex gap-2">
-                  <a href={item.resultUrl} download target="_blank" rel="noopener noreferrer" className="flex-1 rounded bg-zinc-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-zinc-800">
-                    Download
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(item.resultUrl);
-                      alert("Link copied!");
-                    }}
-                    className="rounded border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
-                  >
-                    Copy link
-                  </button>
-                </div>
+                {item.error ? (
+                  <div className="mb-2 flex aspect-square flex-col items-center justify-center rounded border border-amber-200 bg-amber-50 p-2 text-center">
+                    <p className="text-xs font-medium text-amber-800">Failed</p>
+                    <p className="mt-1 text-xs text-amber-700 line-clamp-2">{item.error}</p>
+                    <button
+                      type="button"
+                      onClick={() => retryBulkIndex(idx)}
+                      disabled={processing || credits <= 0 || !item.original}
+                      className="mt-2 rounded bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-500 disabled:opacity-50"
+                    >
+                      Retry (1 credit)
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className={`mb-2 flex aspect-square items-center justify-center overflow-hidden rounded border border-zinc-100 ${mode === "amazon" ? "bg-white" : "bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#f5f5f5_0%_50%)_50%_/16px_16px]"}`}>
+                      <img src={item.resultUrl} alt={`Result ${idx + 1}`} className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <div className="flex gap-2">
+                      <a href={item.resultUrl} download target="_blank" rel="noopener noreferrer" className="flex-1 rounded bg-zinc-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-zinc-800">
+                        Download
+                      </a>
+                      <button
+                        type="button"
+                onClick={() => {
+                  if (item.resultUrl) {
+                    navigator.clipboard.writeText(item.resultUrl);
+                    track("copy_link_clicked");
+                    alert("Link copied!");
+                  }
+                }}
+                        className="rounded border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                      >
+                        Copy link
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
@@ -482,6 +730,7 @@ export default function UploadZone() {
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(result);
+                  track("copy_link_clicked");
                   alert("Link copied to clipboard!");
                 }}
                 className="rounded-lg border-2 border-zinc-300 bg-white px-6 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"

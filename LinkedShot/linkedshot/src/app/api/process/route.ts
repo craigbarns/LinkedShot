@@ -73,18 +73,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const falRes = await fetch(falUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Key ${process.env.FAL_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ image_url: imageUrl }),
-    });
+    const startMs = Date.now();
+
+    const callFalWithTimeout = (): Promise<Response> => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60_000);
+      return fetch(falUrl, {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Key ${process.env.FAL_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image_url: imageUrl }),
+      }).finally(() => clearTimeout(timeoutId));
+    };
+
+    let falRes = await callFalWithTimeout();
+    if (!falRes.ok && falRes.status >= 500 && falRes.status < 600) {
+      falRes = await callFalWithTimeout();
+    }
+
+    const durationMs = Date.now() - startMs;
 
     if (!falRes.ok) {
       const errText = await falRes.text();
-      console.error("FAL error:", falRes.status, errText);
+      console.error(JSON.stringify({
+        event: "job_failed",
+        status: falRes.status,
+        duration_ms: durationMs,
+        error_msg: errText.slice(0, 500),
+        mode,
+      }));
       return NextResponse.json(
         { error: "Our AI is busy or couldn't process this image. Please try again in a few seconds." },
         { status: 502 }
@@ -94,10 +114,18 @@ export async function POST(request: NextRequest) {
     const falData = (await falRes.json()) as {
       image?: { url?: string };
       url?: string;
+      request_id?: string;
     };
     const resultImageUrl =
       falData.image?.url ?? falData.url ?? null;
     if (!resultImageUrl) {
+      console.error(JSON.stringify({
+        event: "job_failed",
+        duration_ms: durationMs,
+        fal_request_id: falData.request_id ?? null,
+        error_msg: "No result URL in FAL response",
+        mode,
+      }));
       return NextResponse.json(
         { error: "We couldn't get a result for this image. Try another photo or try again." },
         { status: 502 }
@@ -128,6 +156,14 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    console.info(JSON.stringify({
+      event: "job_succeeded",
+      duration_ms: durationMs,
+      fal_request_id: (falData as { request_id?: string }).request_id ?? null,
+      mode,
+      status: "done",
+    }));
 
     const rawPath = imageUrl.split("/storage/v1/object/public/raw/")[1] ?? null;
     const usedFreeCredit = creditsRow.amount <= 3;

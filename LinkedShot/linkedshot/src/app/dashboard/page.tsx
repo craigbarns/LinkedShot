@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { track } from "@/lib/analytics";
 import {
   Upload,
   Download,
@@ -42,6 +43,14 @@ function DashboardContent() {
   const [uploading, setUploading] = useState(false);
   const [referralUrl, setReferralUrl] = useState("");
   const checkoutSuccess = searchParams.get("checkout") === "success";
+  const purchaseTracked = useRef(false);
+
+  useEffect(() => {
+    if (checkoutSuccess && !purchaseTracked.current) {
+      purchaseTracked.current = true;
+      track("purchase_completed");
+    }
+  }, [checkoutSuccess]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && user) {

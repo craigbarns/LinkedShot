@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { track } from "@/lib/analytics";
 import type { PricingPlan } from "@/types";
 
 type Locale = { currency: "eur" | "usd"; symbol: string } | null;
@@ -43,6 +44,7 @@ export default function Pricing({ plans }: PricingProps) {
         throw new Error(data.error || "Checkout failed");
       }
       if (data.url) {
+        track("checkout_started", { planId });
         window.location.href = data.url;
       } else {
         console.error("Checkout: no URL in response", data);

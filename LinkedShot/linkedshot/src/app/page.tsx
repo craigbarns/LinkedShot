@@ -236,9 +236,9 @@ export default function Home() {
               <span>✓ Cancel anytime</span>
               <span>✓ HD download</span>
             </p>
-            <p className="mt-6 text-xs text-zinc-600">
-              Secure Stripe checkout · Amazon compliant · 30-day guarantee
-            </p>
+            <div className="mt-6 text-center">
+              <TrustBadges variant="dark" compact />
+            </div>
           </div>
         </section>
 
@@ -249,7 +249,7 @@ export default function Home() {
               Simple pricing
             </h2>
             <div className="mt-6 flex justify-center">
-              <TrustBadges variant="light" />
+              <TrustBadges variant="light" compact />
             </div>
             <div className="mt-10">
               <Pricing plans={plans} />
