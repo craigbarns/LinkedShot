@@ -32,7 +32,7 @@ export default function HeroSection() {
           id="hero-heading"
           className="mx-auto max-w-4xl text-5xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-6xl md:text-7xl"
         >
-          Pro photos
+          Amazon product photos
           <br />
           <span
             className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent"
@@ -43,8 +43,7 @@ export default function HeroSection() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 sm:text-xl">
-          Amazon white background, transparent PNG, soon lifestyle & headshots.
-          Upload → HD PNG in ~3 seconds. No Photoshop.
+          White background (#FFFFFF) and transparent PNG for Amazon listings. Remove background automatically — HD PNG in ~3 seconds. No Photoshop.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">

@@ -78,14 +78,14 @@ function DashboardContent() {
 
       if (creditsData) setCredits(creditsData.amount);
 
-      const { data: jobsData } = await supabase
-        .from("jobs")
-        .select("*")
-        .eq("user_id", u.id)
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      if (jobsData) setJobs(jobsData);
+      const jobsRes = await fetch("/api/jobs", { credentials: "include" });
+      if (jobsRes.ok) {
+        const { jobs: jobsData } = await jobsRes.json();
+        setJobs(Array.isArray(jobsData) ? jobsData : []);
+      } else {
+        console.error("Dashboard jobs fetch error:", jobsRes.status);
+        setJobs([]);
+      }
 
       const invRes = await fetch("/api/invoices", { credentials: "include" });
       if (invRes.ok) {
@@ -102,8 +102,24 @@ function DashboardContent() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run on mount
   }, []);
+
+  // Refetch jobs when user comes back to the tab (e.g. after processing images on home)
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible" && user) fetchData();
+    };
+    const onFocus = () => {
+      if (user) fetchData();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [user]);
 
   // Envoyer l’événement "purchase" à Google Analytics / Google Ads après paiement
   useEffect(() => {
@@ -290,9 +306,18 @@ function DashboardContent() {
           </label>
         </div>
 
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-zinc-900">
             Recent history
-        </h2>
+          </h2>
+          <button
+            type="button"
+            onClick={() => fetchData()}
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+          >
+            Refresh
+          </button>
+        </div>
 
         {jobs.length === 0 ? (
           <div className="rounded-2xl border border-zinc-200 bg-white p-12 text-center text-zinc-500">

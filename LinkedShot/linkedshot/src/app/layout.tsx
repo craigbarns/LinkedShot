@@ -15,40 +15,52 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://linkedshot.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.linkedshot.com";
+const ogImageUrl = `${siteUrl}/og-image.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "LinkedShot – Amazon Product Photos in Seconds | White Background AI",
+    default: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
     template: "%s | LinkedShot",
   },
   description:
-    "Turn supplier photos into Amazon-compliant white background images in seconds. 3 free credits, no Photoshop. HD PNG, €0.18/image. Used by Amazon sellers.",
+    "Create Amazon-compliant product photos in seconds: white background (#FFFFFF), remove background, HD PNG. 3 free images, no credit card. Used by FBA sellers. Try 1 free image without sign-up.",
+  keywords: [
+    "amazon product photography",
+    "white background amazon",
+    "remove background amazon",
+    "amazon photo requirements",
+    "product photo white background",
+    "amazon listing images",
+    "FBA product photos",
+    "AI background removal",
+  ],
   authors: [{ name: "LinkedShot", url: siteUrl }],
   creator: "LinkedShot",
+  publisher: "LinkedShot",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
     siteName: "LinkedShot",
-    title: "LinkedShot – Amazon Product Photos in Seconds",
+    title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
     description:
-      "Turn supplier photos into Amazon-compliant white background images. 3 free credits. No Photoshop required.",
+      "Create Amazon-compliant product photos in seconds. White background, remove background, HD PNG. 3 free images. Try 1 free without sign-up.",
     images: [
       {
-        url: "/og-image.png",
+        url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: "LinkedShot – Amazon product photos in seconds",
+        alt: "LinkedShot – Amazon product photos, white background, in seconds",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LinkedShot – Amazon Product Photos in Seconds",
-    description: "White background images for Amazon in seconds. 3 free credits.",
-    images: ["/og-image.png"],
+    title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
+    description: "Amazon-compliant product photos in seconds. White background, 3 free images.",
+    images: [ogImageUrl],
   },
   robots: {
     index: true,
@@ -61,21 +73,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl,
   },
-  verification: {
-    // Optional: add when you have them
-    // google: "your-google-verification-code",
-    // yandex: "your-yandex-verification-code",
-  },
+  verification: {},
 };
 
-const jsonLd = {
+const jsonLdSoftware = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: "LinkedShot",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   description:
-    "Turn supplier photos into Amazon-compliant white background images in seconds. AI-powered background removal.",
+    "Create Amazon-compliant product photos in seconds. AI removes the background and outputs pure white (#FFFFFF) or transparent PNG. Used by Amazon and FBA sellers.",
   url: siteUrl,
   offers: {
     "@type": "AggregateOffer",
@@ -84,6 +92,21 @@ const jsonLd = {
     highPrice: "29",
     offerCount: "3",
   },
+  featureList: [
+    "Amazon white background (#FFFFFF)",
+    "Transparent PNG",
+    "HD 1024×1024 PNG",
+    "~3 seconds per image",
+    "No Photoshop required",
+  ],
+};
+
+const jsonLdOrganization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "LinkedShot",
+  url: siteUrl,
+  logo: `${siteUrl}/og-image.png`,
 };
 
 export default function RootLayout({
@@ -120,7 +143,11 @@ export default function RootLayout({
       >
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSoftware) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
         />
         {children}
         <TrackPageView />

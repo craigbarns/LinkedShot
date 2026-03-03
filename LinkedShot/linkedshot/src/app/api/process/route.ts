@@ -167,13 +167,16 @@ export async function POST(request: NextRequest) {
 
     const rawPath = imageUrl.split("/storage/v1/object/public/raw/")[1] ?? null;
     const usedFreeCredit = creditsRow.amount <= 3;
-    await admin.from("jobs").insert({
+    const { error: jobInsertError } = await admin.from("jobs").insert({
       user_id: user.id,
       original_path: rawPath ?? imageUrl,
       processed_path: processedPath,
       status: "done",
       used_free_credit: usedFreeCredit,
     });
+    if (jobInsertError) {
+      console.error("Job insert error (image was still processed):", jobInsertError);
+    }
 
     const {
       data: { publicUrl },

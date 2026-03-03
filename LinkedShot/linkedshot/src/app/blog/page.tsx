@@ -2,16 +2,19 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BLOG_POSTS } from "@/lib/blog-posts";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.linkedshot.com";
+
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Amazon Product Photo Guides – White Background, Compliance, AI Tips",
   description:
-    "Guides and tips for Amazon product photos: compliance, white background, Fiverr vs AI. Get your listings approved.",
+    "Guides for Amazon product photography: image requirements, white background (#FFFFFF), Fiverr vs AI, remove background. Get your listings approved.",
   openGraph: {
-    title: "LinkedShot Blog – Amazon Product Photo Guides",
-    description: "Guides for Amazon image requirements, DIY photography, and AI tools.",
+    title: "Amazon Product Photo Guides – White Background & Compliance | LinkedShot Blog",
+    description: "Guides for Amazon image requirements, white background, and AI product photos.",
     type: "website",
+    url: `${siteUrl}/blog`,
   },
-  alternates: { canonical: "/blog" },
+  alternates: { canonical: `${siteUrl}/blog` },
 };
 
 const SLUG_TO_SUMMARY: Record<string, string> = {

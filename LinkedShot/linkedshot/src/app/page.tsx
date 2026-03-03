@@ -14,6 +14,21 @@ import NavLinks from "@/components/NavLinks";
 import DashboardLinkIfAuth from "@/components/DashboardLinkIfAuth";
 import type { PricingPlan } from "@/types";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.linkedshot.com";
+
+export const metadata = {
+  title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
+  description:
+    "Create Amazon-compliant product photos in seconds: white background (#FFFFFF), remove background, HD PNG. 3 free images, no credit card. Try 1 free without sign-up.",
+  openGraph: {
+    title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
+    description:
+      "Create Amazon-compliant product photos in seconds. White background, remove background, HD PNG. 3 free images.",
+    url: siteUrl,
+  },
+  alternates: { canonical: siteUrl },
+};
+
 const FAQ_ITEMS = [
   {
     q: "Does it keep natural shadows?",
@@ -30,6 +45,10 @@ const FAQ_ITEMS = [
   {
     q: "Is it really Amazon compliant?",
     a: "We output pure white (#FFFFFF) HD PNG (1024×1024), which meets Amazon's minimum size (1000px).",
+  },
+  {
+    q: "How do I get a white background for my Amazon product photos?",
+    a: "Upload your product photo to LinkedShot. Our AI removes the background and outputs a pure white (#FFFFFF) or transparent PNG in about 3 seconds. No Photoshop or photographer needed.",
   },
 ] as const;
 
@@ -83,9 +102,21 @@ export default function Home() {
           </div>
         </section>
 
+        {/* SEO: keyword-rich intro for crawlers and clarity */}
+        <section className="border-b border-zinc-200/80 bg-white px-4 py-8" aria-label="About Amazon product photography">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-zinc-600">
+              <strong className="text-zinc-800">Amazon product photography</strong> made simple: upload any product photo, get a <strong className="text-zinc-800">white background</strong> or <strong className="text-zinc-800">transparent PNG</strong> that meets Amazon&apos;s image requirements. Our AI <strong className="text-zinc-800">removes the background</strong> in seconds — no photographer or Photoshop needed. Perfect for FBA sellers and Amazon listings.
+            </p>
+          </div>
+        </section>
+
         {/* Upload */}
-        <section id="upload" className="bg-zinc-50/80 px-4 py-20">
+        <section id="upload" className="bg-zinc-50/80 px-4 py-20" aria-labelledby="upload-heading">
           <div className="mx-auto max-w-3xl">
+            <h2 id="upload-heading" className="sr-only">
+              Upload your product photo for white background or transparent PNG
+            </h2>
             <div className="rounded-3xl border border-zinc-200/80 bg-white p-8 shadow-xl shadow-zinc-200/50 sm:p-10">
               <UploadZone />
             </div>
@@ -176,6 +207,24 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* HowTo schema for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "HowTo",
+              name: "How to get Amazon-compliant product photos with white background",
+              description: "Use LinkedShot to turn any product photo into an Amazon-ready image with pure white background in seconds.",
+              step: [
+                { "@type": "HowToStep", name: "Upload", text: "Upload your product photo (JPG, PNG or WebP)." },
+                { "@type": "HowToStep", name: "AI processing", text: "Our AI removes the background and outputs white (#FFFFFF) or transparent PNG in ~3 seconds." },
+                { "@type": "HowToStep", name: "Download", text: "Download your HD PNG (1024×1024) ready for Amazon listings." },
+              ],
+            }),
+          }}
+        />
 
         {/* FAQ */}
         <section className="bg-white px-4 py-20" aria-labelledby="faq-heading">
