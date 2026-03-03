@@ -279,7 +279,7 @@ export default function UploadZone() {
                 : "text-zinc-600 hover:text-zinc-900"
             }`}
           >
-            Amazon (fond blanc)
+            Amazon (white background)
           </button>
           <button
             type="button"
@@ -290,7 +290,7 @@ export default function UploadZone() {
                 : "text-zinc-600 hover:text-zinc-900"
             }`}
           >
-            Fond transparent
+            Transparent
           </button>
         </div>
         <span className="text-sm font-medium text-zinc-700">

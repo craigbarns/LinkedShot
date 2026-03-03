@@ -30,7 +30,7 @@ export default function NavLinks() {
         href="/login"
         className="text-sm font-medium text-zinc-400 transition hover:text-white"
       >
-        Connexion
+        Sign In
       </Link>
       {isAuthenticated === true && (
         <Link
@@ -50,7 +50,7 @@ export default function NavLinks() {
         href="/#upload"
         className="rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
       >
-        Commencer
+        Get Started
       </Link>
     </nav>
   );

@@ -70,7 +70,7 @@ export default function Pricing({ plans }: PricingProps) {
           {plan.id === "pro" && (
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
               <span className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-bold text-white shadow-lg">
-                POPULAIRE
+                MOST POPULAR
               </span>
             </div>
           )}
@@ -98,9 +98,9 @@ export default function Pricing({ plans }: PricingProps) {
             <Link
               href="/login"
               className="flex w-full items-center justify-center rounded-2xl bg-zinc-900 py-4 font-semibold text-white transition hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-              aria-label="S'inscrire pour 3 images gratuites"
+              aria-label="Sign in to get 3 free images"
             >
-              Commencer gratuitement
+              Start free
             </Link>
           ) : (
             <button
@@ -115,10 +115,10 @@ export default function Pricing({ plans }: PricingProps) {
               aria-label={`${plan.credits} images pour ${locale?.symbol ?? "€"}${plan.price}`}
             >
               {loadingPlanId === plan.id
-                ? "Redirection…"
+                ? "Redirecting…"
                 : plan.id === "starter"
-                  ? "50 images"
-                  : "200 images"}
+                  ? "Get 50 images"
+                  : "Get 200 images"}
             </button>
           )}
         </div>

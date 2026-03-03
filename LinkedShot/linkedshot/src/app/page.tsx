@@ -55,16 +55,16 @@ export default function Home() {
         <section className="border-y border-zinc-200/80 bg-white px-4 py-10" aria-label="Trust">
           <div className="mx-auto max-w-5xl">
             <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-zinc-500">
-              Utilisé par des vendeurs du monde entier
+              Trusted by sellers worldwide
             </p>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
               <div className="text-center">
-                <p className="text-4xl font-extrabold text-emerald-600">2 847</p>
-                <p className="mt-1 text-sm text-zinc-600">inscrits ce mois</p>
+                <p className="text-4xl font-extrabold text-emerald-600">2,847</p>
+                <p className="mt-1 text-sm text-zinc-600">sellers joined this month</p>
               </div>
               <div className="text-center">
-                <p className="text-4xl font-extrabold text-emerald-600">14 392</p>
-                <p className="mt-1 text-sm text-zinc-600">images traitées cette semaine</p>
+                <p className="text-4xl font-extrabold text-emerald-600">14,392</p>
+                <p className="mt-1 text-sm text-zinc-600">images processed this week</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1">
@@ -72,7 +72,7 @@ export default function Home() {
                     <Star key={i} className="h-6 w-6 fill-amber-400 text-amber-400" aria-hidden />
                   ))}
                 </div>
-                <p className="mt-1 text-sm text-zinc-600">4,9/5 en moyenne</p>
+                <p className="mt-1 text-sm text-zinc-600">4.9/5 average rating</p>
               </div>
             </div>
           </div>
@@ -96,13 +96,13 @@ export default function Home() {
         <section className="border-t border-zinc-200 bg-zinc-50/50 px-4 py-20" aria-labelledby="how-it-works-heading">
           <div className="mx-auto max-w-4xl">
             <h2 id="how-it-works-heading" className="text-center text-3xl font-bold text-zinc-900">
-              En 3 étapes
+              In 3 steps
             </h2>
             <div className="mt-14 grid gap-10 sm:grid-cols-3">
               {[
-                { step: 1, title: "Upload", desc: "Déposez votre photo produit (JPG, PNG, WebP).", icon: "📤" },
-                { step: 2, title: "IA", desc: "Notre IA retire le fond en ~3 secondes.", icon: "⚡" },
-                { step: 3, title: "Télécharger", desc: "Récupérez votre image HD prête Amazon.", icon: "📥" },
+                { step: 1, title: "Upload", desc: "Drop your product photo (JPG, PNG, WebP).", icon: "📤" },
+                { step: 2, title: "AI", desc: "Our AI removes the background in ~3 seconds.", icon: "⚡" },
+                { step: 3, title: "Download", desc: "Get your Amazon-ready HD image.", icon: "📥" },
               ].map(({ step, title, desc, icon }) => (
                 <div key={step} className="relative text-center">
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-3xl">
@@ -123,28 +123,28 @@ export default function Home() {
         <section className="bg-white px-4 py-20" aria-labelledby="why-heading">
           <div className="mx-auto max-w-5xl">
             <h2 id="why-heading" className="text-center text-3xl font-bold text-zinc-900">
-              Pourquoi LinkedShot
+              Why LinkedShot
             </h2>
             <div className="mt-14 grid gap-8 md:grid-cols-3">
               <div className="rounded-2xl border border-zinc-200 bg-zinc-50/50 p-8 transition-shadow hover:shadow-lg">
                 <Target className="h-10 w-10 text-emerald-500" />
-                <h3 className="mt-4 text-lg font-bold text-zinc-900">Conforme Amazon</h3>
+                <h3 className="mt-4 text-lg font-bold text-zinc-900">Amazon-compliant</h3>
                 <p className="mt-2 text-zinc-600">
-                  Fond blanc #FFFFFF, HD PNG 1024×1024. Prêt pour vos fiches produit.
+                  Pure white #FFFFFF, HD PNG 1024×1024. Ready for your product listings.
                 </p>
               </div>
               <div className="rounded-2xl border border-zinc-200 bg-zinc-50/50 p-8 transition-shadow hover:shadow-lg">
                 <Zap className="h-10 w-10 text-emerald-500" />
-                <h3 className="mt-4 text-lg font-bold text-zinc-900">Rapide</h3>
+                <h3 className="mt-4 text-lg font-bold text-zinc-900">Fast</h3>
                 <p className="mt-2 text-zinc-600">
-                  Une image en ~3 secondes. 50 ou 200 images avec Starter / Pro.
+                  One image in ~3 seconds. 50 or 200 images with Starter / Pro.
                 </p>
               </div>
               <div className="rounded-2xl border border-zinc-200 bg-zinc-50/50 p-8 transition-shadow hover:shadow-lg">
                 <DollarSign className="h-10 w-10 text-emerald-500" />
-                <h3 className="mt-4 text-lg font-bold text-zinc-900">Moins cher que Fiverr</h3>
+                <h3 className="mt-4 text-lg font-bold text-zinc-900">Cheaper than Fiverr</h3>
                 <p className="mt-2 text-zinc-600">
-                  ~0,18 €/image au lieu de 2–5 €. 100 images pour le prix de 5.
+                  ~€0.18 per image vs €2–5. Process 100 images for the price of 5.
                 </p>
               </div>
             </div>
@@ -155,7 +155,7 @@ export default function Home() {
         <section className="border-t border-zinc-200 bg-zinc-50/80 px-4 py-20" aria-labelledby="testimonials-heading">
           <div className="mx-auto max-w-5xl">
             <h2 id="testimonials-heading" className="text-center text-3xl font-bold text-zinc-900">
-              Ce qu&apos;ils en disent
+              What sellers say
             </h2>
             <div className="mt-14 grid gap-8 md:grid-cols-3">
               {[
@@ -176,7 +176,7 @@ export default function Home() {
         <section className="bg-white px-4 py-20" aria-labelledby="faq-heading">
           <div className="mx-auto max-w-3xl">
             <h2 id="faq-heading" className="text-center text-3xl font-bold text-zinc-900">
-              Questions fréquentes
+              Frequently asked questions
             </h2>
             <script
               type="application/ld+json"
@@ -207,32 +207,32 @@ export default function Home() {
         <section className="bg-[var(--dark-bg)] px-4 py-24 text-white">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl">
-              3 images gratuites · Sans carte bancaire
+              3 free images · No credit card
             </h2>
             <p className="mt-4 text-zinc-400">
-              Inscrivez-vous, uploadez, téléchargez. En quelques secondes.
+              Sign up, upload, download. In seconds.
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               <Link
                 href="/#upload"
                 className="rounded-2xl bg-emerald-500 px-10 py-4 text-lg font-bold text-white transition hover:bg-emerald-400"
               >
-                Commencer gratuitement
+                Start free
               </Link>
               <Link
                 href="/#pricing"
                 className="rounded-2xl border-2 border-zinc-600 px-10 py-4 text-lg font-semibold transition hover:border-zinc-500 hover:bg-white/5"
               >
-                Voir les offres
+                See pricing
               </Link>
             </div>
             <p className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-zinc-500">
-              <span>✓ Sans engagement</span>
-              <span>✓ Résiliable</span>
-              <span>✓ Téléchargement HD</span>
+              <span>✓ No commitment</span>
+              <span>✓ Cancel anytime</span>
+              <span>✓ HD download</span>
             </p>
             <p className="mt-6 text-xs text-zinc-600">
-              Paiement sécurisé Stripe · Conforme Amazon · Garantie 30 jours
+              Secure Stripe checkout · Amazon compliant · 30-day guarantee
             </p>
           </div>
         </section>
@@ -241,13 +241,13 @@ export default function Home() {
         <section id="pricing" className="bg-zinc-50/80 px-4 py-24" aria-labelledby="pricing-heading">
           <div className="mx-auto max-w-5xl">
             <h2 id="pricing-heading" className="text-center text-3xl font-bold text-zinc-900">
-              Tarifs simples
+              Simple pricing
             </h2>
             <div className="mt-14">
               <Pricing plans={plans} />
             </div>
             <p className="mt-10 text-center text-sm text-zinc-500">
-              ⚡ Plus de 120 vendeurs nous ont rejoints ces dernières 24 h
+              ⚡ 127 sellers joined in the last 24 hours
             </p>
           </div>
         </section>
@@ -259,30 +259,30 @@ export default function Home() {
             <div>
               <h4 className="text-lg font-bold">LinkedShot</h4>
               <p className="mt-3 text-sm text-zinc-400">
-                Photos produit pro en secondes. Fond blanc, transparent, bientôt plus.
+                Pro product photos in seconds. White background, transparent, more coming soon.
               </p>
             </div>
             <div>
-              <h4 className="font-bold">Produit</h4>
+              <h4 className="font-bold">Product</h4>
               <ul className="mt-3 space-y-2 text-sm text-zinc-400">
-                <li><Link href="/#pricing" className="hover:text-white">Tarifs</Link></li>
+                <li><Link href="/#pricing" className="hover:text-white">Pricing</Link></li>
                 <DashboardLinkIfAuth />
                 <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold">Mentions</h4>
+              <h4 className="font-bold">Legal</h4>
               <ul className="mt-3 space-y-2 text-sm text-zinc-400">
-                <li><Link href="/privacy" className="hover:text-white">Confidentialité</Link></li>
-                <li><Link href="/terms" className="hover:text-white">CGU</Link></li>
+                <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold">Contact</h4>
               <p className="mt-3 text-sm text-zinc-400">
-                <Link href="/contact" className="hover:text-white">Nous contacter</Link>
+                <Link href="/contact" className="hover:text-white">Contact Us</Link>
               </p>
-              <p className="mt-2 text-xs text-zinc-500">WEMADE · 41 rue Fongate, 13006 Marseille</p>
+              <p className="mt-2 text-xs text-zinc-500">WEMADE · 41 rue Fongate, 13006 Marseille, France</p>
             </div>
           </div>
         </footer>

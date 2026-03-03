@@ -27,7 +27,7 @@ export default function BeforeAfter() {
     <div className="py-16">
       <div className="mx-auto max-w-6xl px-4">
         <h2 id="examples-heading" className="mb-12 text-center text-3xl font-bold text-zinc-900">
-          Du fournisseur à la fiche Amazon
+          From supplier photo to Amazon success
         </h2>
 
         <div className="mb-8 grid gap-8 md:grid-cols-2">
@@ -64,7 +64,7 @@ export default function BeforeAfter() {
           </div>
           <div className="overflow-hidden rounded-xl border-2 border-emerald-300 bg-white shadow-lg">
             <p className="bg-emerald-600 px-4 py-2 text-center text-sm font-bold text-white">
-              Après — LinkedShot (fond blanc)
+              After — LinkedShot (white background)
             </p>
             <div
               className="relative flex aspect-square items-center justify-center p-4"
@@ -94,7 +94,7 @@ export default function BeforeAfter() {
               style={{ backgroundColor: "#FFFFFF" }}
             />
             <span className="absolute right-4 top-4 z-10 rounded-full bg-emerald-500 px-3 py-1 text-sm font-bold text-white">
-              Résultat LinkedShot
+              LinkedShot result
             </span>
           </div>
           <div

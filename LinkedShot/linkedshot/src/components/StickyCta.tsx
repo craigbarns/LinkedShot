@@ -26,24 +26,24 @@ export default function StickyCta() {
     <div
       className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[var(--dark-bg)]/95 px-4 py-4 shadow-2xl backdrop-blur-xl"
       role="banner"
-      aria-label="Appel à l'action"
+      aria-label="Call to action"
     >
       <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4">
         <p className="text-sm font-medium text-zinc-300">
-          3 images gratuites · Sans carte bancaire
+          3 free images · No credit card
         </p>
         <div className="flex gap-3">
           <Link
             href="/#upload"
             className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-400"
           >
-            Uploader gratuitement
+            Upload free
           </Link>
           <Link
             href="/#pricing"
             className="rounded-xl border border-zinc-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
           >
-            Voir les offres
+            See pricing
           </Link>
         </div>
       </div>

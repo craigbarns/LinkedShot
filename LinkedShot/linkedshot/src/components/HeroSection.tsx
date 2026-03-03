@@ -24,26 +24,26 @@ export default function HeroSection() {
       <div className="relative z-10 mx-auto max-w-5xl text-center">
         <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400">
           <Zap className="h-4 w-4" />
-          3 images gratuites · Sans carte bancaire
+          3 free images · No credit card
         </p>
 
         <h1
           id="hero-heading"
           className="mx-auto max-w-4xl text-5xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-6xl md:text-7xl"
         >
-          Photos pro
+          Pro photos
           <br />
           <span
             className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent"
             style={{ backgroundSize: "200% auto" }}
           >
-            en quelques secondes
+            in seconds
           </span>
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400 sm:text-xl">
-          Fond blanc Amazon, fond transparent, bientôt lifestyle & headshots.
-          Upload → HD PNG en ~3 secondes. Pas de Photoshop.
+          Amazon white background, transparent PNG, soon lifestyle & headshots.
+          Upload → HD PNG in ~3 seconds. No Photoshop.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -51,23 +51,23 @@ export default function HeroSection() {
             type="button"
             onClick={() => scrollTo("upload")}
             className="btn-glow group relative inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-10 py-5 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:bg-emerald-400 hover:shadow-emerald-500/40 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[var(--dark-bg)]"
-            aria-label="Obtenir 3 images gratuites"
+            aria-label="Get 3 free images"
           >
-            Obtenir 3 images gratuites →
+            Get 3 free images →
           </button>
           <button
             type="button"
             onClick={() => scrollTo("examples")}
             className="rounded-2xl border-2 border-zinc-600 bg-transparent px-10 py-5 text-lg font-semibold text-white transition-colors hover:border-zinc-500 hover:bg-white/5"
           >
-            Voir avant / après
+            See before / after
           </button>
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-zinc-500">
           <span className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-            Blanc #FFFFFF
+            Pure white #FFFFFF
           </span>
           <span className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
@@ -75,17 +75,17 @@ export default function HeroSection() {
           </span>
           <span className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-            Sans watermark
+            No watermark
           </span>
           <span className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-            ~3 sec / image
+            ~3 sec per image
           </span>
         </div>
 
         <p className="mt-6 flex items-center justify-center gap-2 text-xs text-zinc-500">
           <Shield className="h-4 w-4 text-emerald-500/80" />
-          IA de pointe · Même tech que les grandes marketplaces
+          State-of-the-art AI · Same tech as top marketplaces
         </p>
       </div>
     </section>
