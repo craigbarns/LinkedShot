@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createServiceRoleClient } from "@/lib/supabase";
 
 const FAL_ENDPOINTS = {
@@ -13,6 +14,9 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.next();
 
   try {
+    let user: { id: string } | null = null;
+
+    // 1. Try cookie-based auth
     const supabaseAuth = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -29,13 +33,27 @@ export async function POST(request: NextRequest) {
         },
       }
     );
+    const { data: { user: cookieUser } } = await supabaseAuth.auth.getUser();
+    if (cookieUser) user = cookieUser;
 
-    const {
-      data: { user },
-    } = await supabaseAuth.auth.getUser();
+    // 2. Fallback: Bearer token (needed in production / Vercel where cookies may not pass)
+    if (!user) {
+      const authHeader = request.headers.get("authorization");
+      const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+      if (token) {
+        const supabaseWithToken = createSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          { global: { headers: { Authorization: `Bearer ${token}` } } }
+        );
+        const { data: { user: tokenUser } } = await supabaseWithToken.auth.getUser();
+        if (tokenUser) user = tokenUser;
+      }
+    }
+
     if (!user) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "Unauthorized. Please sign in again." },
         { status: 401 }
       );
     }
