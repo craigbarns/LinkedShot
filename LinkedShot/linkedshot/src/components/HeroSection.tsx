@@ -31,7 +31,7 @@ export default function HeroSection() {
           >
             Get 3 free images →
           </button>
-          <span className="text-xs text-zinc-500">Takes 10 seconds to try.</span>
+          <span className="text-xs text-zinc-500">Quick sign-in, then upload. No credit card.</span>
         </div>
         <button
           type="button"

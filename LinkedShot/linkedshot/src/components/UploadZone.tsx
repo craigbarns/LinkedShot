@@ -170,8 +170,11 @@ export default function UploadZone() {
   if (!user) {
     return (
       <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-gray-50 p-8 text-center">
-        <p className="mb-4 text-zinc-600">
-          Sign in to process your images
+        <p className="mb-1 text-lg font-semibold text-zinc-800">
+          Get your 3 free images — no credit card
+        </p>
+        <p className="mb-6 text-sm text-zinc-600">
+          Sign in once, then upload and download. Takes about 10 seconds.
         </p>
         <SignInWithGoogleButton />
         <p className="mt-3 text-sm text-zinc-500">

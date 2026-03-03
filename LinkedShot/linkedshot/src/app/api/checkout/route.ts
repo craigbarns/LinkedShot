@@ -13,6 +13,14 @@ function getBaseUrl(request: NextRequest): string {
 export async function POST(request: NextRequest) {
   const response = NextResponse.next();
 
+  if (!process.env.STRIPE_SECRET_KEY?.startsWith("sk_")) {
+    console.error("Checkout: STRIPE_SECRET_KEY missing or invalid");
+    return NextResponse.json(
+      { error: "Payment is not configured. Please contact support." },
+      { status: 503 }
+    );
+  }
+
   try {
     const supabaseAuth = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -89,8 +97,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (e) {
     console.error("Checkout error:", e);
+    const message =
+      e instanceof Error ? e.message : "Checkout failed. Please try again or contact support.";
     return NextResponse.json(
-      { error: "Checkout failed" },
+      { error: message },
       { status: 500 }
     );
   }
