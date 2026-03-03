@@ -42,6 +42,7 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [referralUrl, setReferralUrl] = useState("");
+  const [jobsError, setJobsError] = useState<string | null>(null);
   const checkoutSuccess = searchParams.get("checkout") === "success";
   const purchaseTracked = useRef(false);
 
@@ -78,12 +79,17 @@ function DashboardContent() {
 
       if (creditsData) setCredits(creditsData.amount);
 
+      setJobsError(null);
       const jobsRes = await fetch("/api/jobs", { credentials: "include" });
       if (jobsRes.ok) {
         const { jobs: jobsData } = await jobsRes.json();
         setJobs(Array.isArray(jobsData) ? jobsData : []);
       } else {
-        console.error("Dashboard jobs fetch error:", jobsRes.status);
+        const errBody = await jobsRes.json().catch(() => ({}));
+        const msg = jobsRes.status === 401
+          ? "Session expired. Please sign in again."
+          : (errBody.error as string) || `Error ${jobsRes.status}`;
+        setJobsError(msg);
         setJobs([]);
       }
 
@@ -175,16 +181,18 @@ function DashboardContent() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Processing error");
+        const data = await res.json().catch(() => ({}));
+        const msg = data.error || `Error ${res.status}`;
+        alert(msg);
+        return;
       }
 
       await fetchData();
+      alert("Image processed! Check your history below.");
     } catch (error) {
       console.error(error);
-      alert(
-        error instanceof Error ? error.message : "Upload error"
-      );
+      const msg = error instanceof Error ? error.message : "Upload failed";
+      alert(msg);
     } finally {
       setUploading(false);
     }
@@ -319,15 +327,27 @@ function DashboardContent() {
           </button>
         </div>
 
-        {jobs.length === 0 ? (
+        {jobsError && (
+          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {jobsError}
+            <button
+              type="button"
+              onClick={() => { setJobsError(null); fetchData(); }}
+              className="ml-2 underline"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+        {jobs.length === 0 && !jobsError ? (
           <div className="rounded-2xl border border-zinc-200 bg-white p-12 text-center text-zinc-500">
             <ImageIcon className="mx-auto mb-4 h-12 w-12 text-zinc-300" />
             <p>No images processed yet</p>
             <p className="mt-2 text-sm">
-              Upload your first photo to get started!
+              Upload your first photo above or on the home page.
             </p>
           </div>
-        ) : (
+        ) : jobs.length === 0 ? null : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {jobs.map((job) => (
               <div
