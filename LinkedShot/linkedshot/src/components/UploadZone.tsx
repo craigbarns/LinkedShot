@@ -43,7 +43,23 @@ function SignInWithGoogleButton() {
   );
 }
 
-type ProcessMode = "amazon" | "transparent";
+type ProcessMode = "amazon" | "transparent" | "lifestyle" | "upscale";
+
+const SCENE_PRESETS = [
+  { label: "Marble table", value: "on a clean white marble table with soft natural lighting" },
+  { label: "Wooden desk", value: "on a warm wooden desk in a cozy home office" },
+  { label: "Kitchen counter", value: "on a modern kitchen counter with plants in the background" },
+  { label: "Outdoor garden", value: "in a beautiful outdoor garden with soft morning sunlight" },
+  { label: "Studio gradient", value: "on a clean surface with a soft gradient studio background" },
+  { label: "Luxury shelf", value: "on a luxury glass shelf in a high-end boutique" },
+] as const;
+
+const CREDITS_PER_MODE: Record<ProcessMode, number> = {
+  amazon: 1,
+  transparent: 1,
+  lifestyle: 2,
+  upscale: 1,
+};
 
 const MAX_BULK = 10;
 
@@ -67,6 +83,9 @@ export default function UploadZone() {
   const [anonymousResult, setAnonymousResult] = useState<string | null>(null);
   const [anonymousProcessing, setAnonymousProcessing] = useState(false);
   const [anonymousError, setAnonymousError] = useState<string | null>(null);
+  const [sceneDescription, setSceneDescription] = useState(SCENE_PRESETS[0].value);
+  const [customScene, setCustomScene] = useState("");
+  const [upscaleFactor, setUpscaleFactor] = useState<number>(2);
 
   useEffect(() => {
     if (!processing) {
@@ -110,6 +129,15 @@ export default function UploadZone() {
       const supabase = createClient();
       const session = await supabase.auth.getSession();
       const token = session.data.session?.access_token;
+
+      // Build mode-specific options
+      const options: Record<string, unknown> = {};
+      if (mode === "lifestyle") {
+        options.scene = customScene.trim() || sceneDescription;
+      } else if (mode === "upscale") {
+        options.upscaleFactor = upscaleFactor;
+      }
+
       const response = await fetch("/api/process", {
         method: "POST",
         credentials: "include",
@@ -117,7 +145,7 @@ export default function UploadZone() {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-        body: JSON.stringify({ imageUrl, mode }),
+        body: JSON.stringify({ imageUrl, mode, options }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Processing error");
@@ -125,7 +153,7 @@ export default function UploadZone() {
       if (!resultUrl) throw new Error(data.error || "No result");
       return resultUrl;
     },
-    [mode]
+    [mode, sceneDescription, customScene, upscaleFactor]
   );
 
   const uploadAndGetUrl = useCallback(
@@ -494,35 +522,34 @@ export default function UploadZone() {
     );
   }
 
+  const creditsForMode = CREDITS_PER_MODE[mode];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex rounded-lg border border-zinc-200 bg-zinc-50 p-1">
-          <button
-            type="button"
-            onClick={() => setMode("amazon")}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              mode === "amazon"
-                ? "bg-white text-zinc-900 shadow-sm"
-                : "text-zinc-600 hover:text-zinc-900"
-            }`}
-          >
-            Amazon (white background)
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("transparent")}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-              mode === "transparent"
-                ? "bg-white text-zinc-900 shadow-sm"
-                : "text-zinc-600 hover:text-zinc-900"
-            }`}
-          >
-            Transparent
-          </button>
+        <div className="flex flex-wrap rounded-lg border border-zinc-200 bg-zinc-50 p-1 gap-0.5">
+          {[
+            { key: "amazon" as ProcessMode, label: "🏷️ Amazon", sub: "White BG" },
+            { key: "lifestyle" as ProcessMode, label: "🖼️ Lifestyle", sub: "Scene" },
+            { key: "upscale" as ProcessMode, label: "📐 Upscale", sub: "HD/4K" },
+            { key: "transparent" as ProcessMode, label: "🔲 Transparent", sub: "PNG" },
+          ].map(({ key, label, sub }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setMode(key)}
+              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${mode === key
+                  ? "bg-white text-zinc-900 shadow-sm"
+                  : "text-zinc-600 hover:text-zinc-900"
+                }`}
+            >
+              <span className="block">{label}</span>
+              <span className="block text-[10px] font-normal text-zinc-400">{sub}</span>
+            </button>
+          ))}
         </div>
         <span className="text-sm font-medium text-zinc-700">
-          Credits remaining: {credits}
+          Credits: {credits} {creditsForMode > 1 && <span className="text-xs text-zinc-500">({creditsForMode} per image)</span>}
         </span>
         <button
           type="button"
@@ -537,13 +564,76 @@ export default function UploadZone() {
         </button>
       </div>
 
+      {/* Lifestyle options */}
+      {mode === "lifestyle" && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-zinc-800 mb-2">Choose a scene preset:</label>
+            <div className="flex flex-wrap gap-2">
+              {SCENE_PRESETS.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => { setSceneDescription(preset.value); setCustomScene(""); }}
+                  className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-all ${sceneDescription === preset.value && !customScene.trim()
+                      ? "border-emerald-500 bg-emerald-500 text-white shadow-sm"
+                      : "border-zinc-300 bg-white text-zinc-700 hover:border-emerald-400 hover:bg-emerald-50"
+                    }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-zinc-800 mb-1">Or describe your own scene:</label>
+            <input
+              type="text"
+              value={customScene}
+              onChange={(e) => setCustomScene(e.target.value)}
+              placeholder="e.g. on a beach towel with ocean in the background"
+              className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-800 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            />
+            {customScene.trim() && (
+              <p className="mt-1 text-xs text-emerald-600">✓ Using your custom scene description</p>
+            )}
+          </div>
+          <p className="text-xs text-zinc-500">💡 Tip: Upload your product photo, and the AI will place it in the scene you describe. Best with a product on a plain background.</p>
+        </div>
+      )}
+
+      {/* Upscale options */}
+      {mode === "upscale" && (
+        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-5">
+          <label className="block text-sm font-semibold text-zinc-800 mb-3">Upscale factor:</label>
+          <div className="flex gap-3">
+            {[2, 4].map((factor) => (
+              <button
+                key={factor}
+                type="button"
+                onClick={() => setUpscaleFactor(factor)}
+                className={`flex-1 rounded-lg border-2 px-4 py-3 text-center font-bold transition-all ${upscaleFactor === factor
+                    ? "border-blue-500 bg-blue-500 text-white shadow-sm"
+                    : "border-zinc-300 bg-white text-zinc-700 hover:border-blue-400"
+                  }`}
+              >
+                {factor}x
+                <span className="block text-xs font-normal mt-0.5">{
+                  factor === 2 ? "Double resolution" : "Quadruple resolution"
+                }</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-zinc-500">📐 Perfect for images that don&apos;t meet Amazon&apos;s 1000px minimum requirement.</p>
+        </div>
+      )}
+
       <div
         {...getRootProps()}
-        className={`cursor-pointer rounded-xl border-2 border-dashed p-12 text-center transition-colors ${
-          isDragActive
+        className={`cursor-pointer rounded-xl border-2 border-dashed p-12 text-center transition-colors ${isDragActive
             ? "border-blue-500 bg-blue-50"
             : "border-zinc-300 bg-gray-50 hover:border-zinc-400"
-        } ${processing ? "cursor-not-allowed opacity-50" : ""}`}
+          } ${processing ? "cursor-not-allowed opacity-50" : ""}`}
       >
         <input {...getInputProps()} />
         {processing ? (
@@ -671,13 +761,13 @@ export default function UploadZone() {
                       </a>
                       <button
                         type="button"
-                onClick={() => {
-                  if (item.resultUrl) {
-                    navigator.clipboard.writeText(item.resultUrl);
-                    track("copy_link_clicked");
-                    alert("Link copied!");
-                  }
-                }}
+                        onClick={() => {
+                          if (item.resultUrl) {
+                            navigator.clipboard.writeText(item.resultUrl);
+                            track("copy_link_clicked");
+                            alert("Link copied!");
+                          }
+                        }}
                         className="rounded border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
                       >
                         Copy link

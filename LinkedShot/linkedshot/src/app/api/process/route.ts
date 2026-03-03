@@ -6,9 +6,25 @@ import { createServiceRoleClient } from "@/lib/supabase";
 const FAL_ENDPOINTS = {
   amazon: "https://fal.run/fal-ai/bria/background/remove",
   transparent: "https://fal.run/fal-ai/imageutils/rembg",
+  lifestyle: "https://fal.run/fal-ai/bria/product-shot",
+  upscale: "https://fal.run/fal-ai/topaz/upscale/image",
 } as const;
 
 export type ProcessMode = keyof typeof FAL_ENDPOINTS;
+
+const CREDITS_PER_MODE: Record<ProcessMode, number> = {
+  amazon: 1,
+  transparent: 1,
+  lifestyle: 2,
+  upscale: 1,
+};
+
+interface ProcessOptions {
+  scene?: string;
+  placement?: string;
+  refImageUrl?: string;
+  upscaleFactor?: number;
+}
 
 export async function POST(request: NextRequest) {
   const response = NextResponse.next();
@@ -59,16 +75,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { imageUrl, mode: rawMode } = body as { imageUrl?: string; mode?: string };
+    const { imageUrl, mode: rawMode, options: rawOptions } = body as {
+      imageUrl?: string;
+      mode?: string;
+      options?: ProcessOptions;
+    };
     if (!imageUrl || typeof imageUrl !== "string") {
       return NextResponse.json(
         { error: "imageUrl required" },
         { status: 400 }
       );
     }
-    const mode: ProcessMode =
-      rawMode === "transparent" ? "transparent" : "amazon";
+    const validModes: ProcessMode[] = ["amazon", "transparent", "lifestyle", "upscale"];
+    const mode: ProcessMode = validModes.includes(rawMode as ProcessMode)
+      ? (rawMode as ProcessMode)
+      : "amazon";
     const falUrl = FAL_ENDPOINTS[mode];
+    const creditsNeeded = CREDITS_PER_MODE[mode];
 
     const admin = createServiceRoleClient();
 
@@ -84,18 +107,48 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
-    if (creditsRow.amount <= 0) {
+    if (creditsRow.amount < creditsNeeded) {
       return NextResponse.json(
-        { error: "No credits available" },
+        { error: `Not enough credits. You need ${creditsNeeded} credit(s) for this mode.` },
         { status: 403 }
       );
     }
 
     const startMs = Date.now();
 
+    // Build FAL request body based on mode
+    function buildFalBody(): Record<string, unknown> {
+      switch (mode) {
+        case "lifestyle":
+          return {
+            image_url: imageUrl,
+            scene_description: rawOptions?.scene || "on a clean white marble table with soft natural lighting",
+            ...(rawOptions?.refImageUrl ? { ref_image_url: rawOptions.refImageUrl } : {}),
+            placement_type: "manual_placement",
+            manual_placement_selection: rawOptions?.placement || "bottom_center",
+            num_results: 1,
+            fast: true,
+          };
+        case "upscale":
+          return {
+            image_url: imageUrl,
+            model: "Standard V2",
+            upscale_factor: rawOptions?.upscaleFactor || 2,
+            output_format: "png",
+            face_enhancement: false,
+            subject_detection: "All",
+          };
+        default:
+          return { image_url: imageUrl };
+      }
+    }
+
+    const falBody = buildFalBody();
+    const timeoutMs = mode === "lifestyle" ? 90_000 : 60_000; // lifestyle can be slower
+
     const callFalWithTimeout = (): Promise<Response> => {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60_000);
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       return fetch(falUrl, {
         method: "POST",
         signal: controller.signal,
@@ -103,7 +156,7 @@ export async function POST(request: NextRequest) {
           Authorization: `Key ${process.env.FAL_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ image_url: imageUrl }),
+        body: JSON.stringify(falBody),
       }).finally(() => clearTimeout(timeoutId));
     };
 
@@ -131,11 +184,20 @@ export async function POST(request: NextRequest) {
 
     const falData = (await falRes.json()) as {
       image?: { url?: string };
+      images?: { url?: string }[];
       url?: string;
       request_id?: string;
     };
-    const resultImageUrl =
-      falData.image?.url ?? falData.url ?? null;
+
+    // Extract result URL based on mode (different response shapes)
+    let resultImageUrl: string | null = null;
+    if (mode === "lifestyle") {
+      resultImageUrl = falData.images?.[0]?.url ?? null;
+    } else if (mode === "upscale") {
+      resultImageUrl = falData.image?.url ?? null;
+    } else {
+      resultImageUrl = falData.image?.url ?? falData.url ?? null;
+    }
     if (!resultImageUrl) {
       console.error(JSON.stringify({
         event: "job_failed",
@@ -219,7 +281,7 @@ export async function POST(request: NextRequest) {
     const { error: decrementError } = await admin
       .from("credits")
       .update({
-        amount: Math.max(0, creditsRow.amount - 1),
+        amount: Math.max(0, creditsRow.amount - creditsNeeded),
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", user.id);
