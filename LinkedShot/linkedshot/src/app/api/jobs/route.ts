@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createServiceRoleClient } from "@/lib/supabase";
 
 /**
  * GET /api/jobs — liste des jobs de l'utilisateur connecté.
- * Côté serveur (cookies + service role) pour éviter les soucis RLS/session côté client.
+ * Lit la session via cookies, ou via Authorization: Bearer <token> si les cookies ne passent pas (ex. prod).
  */
 export async function GET(request: NextRequest) {
   try {
+    let user: { id: string } | null = null;
+
     const supabaseAuth = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -20,10 +23,25 @@ export async function GET(request: NextRequest) {
         },
       }
     );
+    const { data: { user: cookieUser } } = await supabaseAuth.auth.getUser();
+    if (cookieUser) {
+      user = cookieUser;
+    }
 
-    const {
-      data: { user },
-    } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      const authHeader = request.headers.get("authorization");
+      const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+      if (token) {
+        const supabaseWithToken = createSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          { global: { headers: { Authorization: `Bearer ${token}` } } }
+        );
+        const { data: { user: tokenUser } } = await supabaseWithToken.auth.getUser();
+        if (tokenUser) user = tokenUser;
+      }
+    }
+
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

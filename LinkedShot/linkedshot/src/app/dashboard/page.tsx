@@ -80,7 +80,14 @@ function DashboardContent() {
       if (creditsData) setCredits(creditsData.amount);
 
       setJobsError(null);
-      const jobsRes = await fetch("/api/jobs", { credentials: "include" });
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      const jobsRes = await fetch("/api/jobs", {
+        credentials: "include",
+        ...(token && {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      });
       if (jobsRes.ok) {
         const { jobs: jobsData } = await jobsRes.json();
         setJobs(Array.isArray(jobsData) ? jobsData : []);
@@ -159,11 +166,16 @@ function DashboardContent() {
     setUploading(true);
 
     try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
       const formData = new FormData();
       formData.append("image", file);
       const res = await fetch("/api/upload-and-process", {
         method: "POST",
         credentials: "include",
+        ...(session?.access_token && {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        }),
         body: formData,
       });
 
