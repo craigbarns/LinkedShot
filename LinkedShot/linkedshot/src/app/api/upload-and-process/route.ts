@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll() {},
+          setAll() { },
         },
       }
     );
@@ -148,15 +148,31 @@ export async function POST(request: NextRequest) {
     }
 
     const usedFreeCredit = creditsRow.amount <= 3;
-    const { error: jobInsertError } = await admin.from("jobs").insert({
+    const jobPayload = {
       user_id: user.id,
       original_path: rawPath,
       processed_path: processedPath,
       status: "done",
       used_free_credit: usedFreeCredit,
-    });
+    };
+    let { error: jobInsertError } = await admin.from("jobs").insert(jobPayload);
+
+    // Fallback: if insert fails (e.g. used_free_credit column missing), retry without it
     if (jobInsertError) {
-      console.error("Job insert error:", jobInsertError);
+      console.error("Job insert error (retrying without used_free_credit):", jobInsertError);
+      const { user_id, original_path, processed_path, status } = jobPayload;
+      const { error: retryError } = await admin.from("jobs").insert({
+        user_id,
+        original_path,
+        processed_path,
+        status,
+      });
+      if (retryError) {
+        console.error("Job insert retry also failed:", retryError);
+        jobInsertError = retryError;
+      } else {
+        jobInsertError = null;
+      }
     }
 
     const { data: processedUrlData } = admin.storage.from("processed").getPublicUrl(processedPath);
@@ -173,6 +189,7 @@ export async function POST(request: NextRequest) {
       resultUrl: processedUrlData.publicUrl,
       processedUrl: processedUrlData.publicUrl,
       status: "done",
+      ...(jobInsertError && { warning: "Image processed but failed to save to history." }),
     });
   } catch (e) {
     console.error("Upload-and-process error:", e);

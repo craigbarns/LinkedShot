@@ -185,15 +185,31 @@ export async function POST(request: NextRequest) {
 
     const rawPath = imageUrl.split("/storage/v1/object/public/raw/")[1] ?? null;
     const usedFreeCredit = creditsRow.amount <= 3;
-    const { error: jobInsertError } = await admin.from("jobs").insert({
+    const jobPayload = {
       user_id: user.id,
       original_path: rawPath ?? imageUrl,
       processed_path: processedPath,
       status: "done",
       used_free_credit: usedFreeCredit,
-    });
+    };
+    let { error: jobInsertError } = await admin.from("jobs").insert(jobPayload);
+
+    // Fallback: if insert fails (e.g. used_free_credit column missing), retry without it
     if (jobInsertError) {
-      console.error("Job insert error (image was still processed):", jobInsertError);
+      console.error("Job insert error (retrying without used_free_credit):", jobInsertError);
+      const { user_id, original_path, processed_path, status } = jobPayload;
+      const { error: retryError } = await admin.from("jobs").insert({
+        user_id,
+        original_path,
+        processed_path,
+        status,
+      });
+      if (retryError) {
+        console.error("Job insert retry also failed:", retryError);
+        jobInsertError = retryError;
+      } else {
+        jobInsertError = null;
+      }
     }
 
     const {
@@ -216,6 +232,7 @@ export async function POST(request: NextRequest) {
       processedUrl: publicUrl,
       resultUrl: publicUrl,
       status: "done",
+      ...(jobInsertError && { warning: "Image processed but failed to save to history. Please contact support." }),
     });
   } catch (e) {
     console.error("Process error:", e);
