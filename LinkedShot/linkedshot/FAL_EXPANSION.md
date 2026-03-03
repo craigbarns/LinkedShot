@@ -1,4 +1,4 @@
-# Élargir LinkedShot au-delà d’Amazon avec FAL.AI
+# Élargir LinkedShot au-delà d’Amazon avec [FAL.AI](http://FAL.AI)
 
 FAL donne accès à [600+ modèles](https://docs.fal.ai/model-apis) (image, vidéo, audio). LinkedShot peut devenir un **studio photo IA** avec plusieurs produits, pas seulement le fond blanc Amazon.
 
@@ -7,20 +7,26 @@ FAL donne accès à [600+ modèles](https://docs.fal.ai/model-apis) (image, vid�
 ## 1. Modèles FAL à intégrer (par cas d’usage)
 
 ### Déjà en place
-| Modèle | Usage actuel |
-|--------|----------------|
+
+
+| Modèle                                  | Usage actuel                   |
+| --------------------------------------- | ------------------------------ |
 | `fal.run/fal-ai/bria/background/remove` | Fond blanc #FFFFFF pour Amazon |
+
 
 ### À ajouter (priorité)
 
-| Cas d’usage | Modèle FAL | Input | Output | Idée produit |
-|-------------|------------|--------|--------|--------------|
-| **Photo produit lifestyle** | [`fal-ai/bria/product-shot`](https://fal.ai/models/fal-ai/bria/product-shot/api) | `image_url` + `scene_description` (ex. "on marble table, luxury") ou `ref_image_url` | Produit placé dans une scène pro | "Lifestyle shot" pour Amazon A+, Shopify, réseaux |
-| **Headshots pro** | [`fal-ai/image-apps-v2/headshot-photo`](https://fal.ai/models/fal-ai/image-apps-v2/headshot-photo/api) | `image_url` + `background_style`: professional, corporate, clean, gradient | Photo pro type LinkedIn | "Photo pro LinkedIn" – un crédit = une photo |
-| **Remove BG (générique)** | [`fal-ai/imageutils/rembg`](https://fal.ai/models/fal-ai/imageutils/rembg) | image URL | PNG transparent (ou crop) | "Fond transparent" pour tout usage (présentations, sites, etc.) |
-| **Upscale** | [`fal-ai/esrgan`](https://fal.ai/models/fal-ai/esrgan) ou [`fal-ai/creative-upscaler`](https://fal.ai/models/fal-ai/creative-upscaler) | image + facteur (2x, 4x) | Image plus grande / plus nette | "Améliorer la résolution" produit ou photo |
+
+| Cas d’usage                 | Modèle FAL                                                                                                                             | Input                                                                                | Output                           | Idée produit                                                    |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------- | --------------------------------------------------------------- |
+| **Photo produit lifestyle** | `[fal-ai/bria/product-shot](https://fal.ai/models/fal-ai/bria/product-shot/api)`                                                       | `image_url` + `scene_description` (ex. "on marble table, luxury") ou `ref_image_url` | Produit placé dans une scène pro | "Lifestyle shot" pour Amazon A+, Shopify, réseaux               |
+| **Headshots pro**           | `[fal-ai/image-apps-v2/headshot-photo](https://fal.ai/models/fal-ai/image-apps-v2/headshot-photo/api)`                                 | `image_url` + `background_style`: professional, corporate, clean, gradient           | Photo pro type LinkedIn          | "Photo pro LinkedIn" – un crédit = une photo                    |
+| **Remove BG (générique)**   | `[fal-ai/imageutils/rembg](https://fal.ai/models/fal-ai/imageutils/rembg)`                                                             | image URL                                                                            | PNG transparent (ou crop)        | "Fond transparent" pour tout usage (présentations, sites, etc.) |
+| **Upscale**                 | `[fal-ai/esrgan](https://fal.ai/models/fal-ai/esrgan)` ou `[fal-ai/creative-upscaler](https://fal.ai/models/fal-ai/creative-upscaler)` | image + facteur (2x, 4x)                                                             | Image plus grande / plus nette   | "Améliorer la résolution" produit ou photo                      |
+
 
 ### Autres modèles utiles (après)
+
 - **Bria Embed Product** (`bria/embed-product`) : intégrer un produit dans une scène avec contrôle précis.
 - **BiRefNet** : retrait de fond alternatif (portrait / général).
 - **Product Photography** (`fal-ai/image-apps-v2/product-photography`) : photos produit avec éclairage réaliste.
@@ -32,6 +38,7 @@ FAL donne accès à [600+ modèles](https://docs.fal.ai/model-apis) (image, vid�
 **Message unique** : *"Photos pro en quelques secondes – fond blanc Amazon, lifestyle produit, headshots LinkedIn, fond transparent."*
 
 ### Page d’accueil proposée
+
 - **Hero** : "Photos pro en secondes. Pas de Photoshop."
 - **Bloc "Que voulez-vous faire ?"** avec cartes :
   1. **Fond blanc Amazon** (actuel) – "Fond #FFFFFF, conforme Amazon"
@@ -43,6 +50,7 @@ FAL donne accès à [600+ modèles](https://docs.fal.ai/model-apis) (image, vid�
 Chaque carte → même système de crédits (3 gratuits, puis 9€/29€) mais **type de job** différent côté API (appel du bon modèle FAL).
 
 ### Crédits
+
 - **Option A** : Un crédit = une opération, quel que soit le type (Amazon, lifestyle, headshot, remove BG, upscale). Simple.
 - **Option B** : Headshot = 2 crédits, lifestyle = 1, etc. Pour refléter le coût FAL (ex. headshot ~0,04$/image).
 
@@ -51,6 +59,7 @@ Chaque carte → même système de crédits (3 gratuits, puis 9€/29€) mais *
 ## 3. Implémentation technique (résumé)
 
 ### Backend
+
 - **Une route par type** (ou une route `/api/process` avec `mode: "amazon" | "lifestyle" | "headshot" | "transparent" | "upscale"`).
 - Pour chaque mode, appeler le bon endpoint FAL :
   - `amazon` → `fal-ai/bria/background/remove` + post-traitement fond #FFFFFF si besoin.
@@ -61,6 +70,7 @@ Chaque carte → même système de crédits (3 gratuits, puis 9€/29€) mais *
 - Même logique **crédits** (décrémenter après succès) et **stockage** (Supabase processed).
 
 ### Frontend
+
 - **Choix du mode** avant upload : onglets ou cartes "Amazon", "Lifestyle", "Headshot", "Transparent", "Upscale".
 - Pour **lifestyle** : champ texte "Décrivez la scène (ex. on marble table)" ou upload d’une image de référence.
 - Pour **headshot** : choix du style de fond (professional, corporate, clean, gradient).
@@ -68,6 +78,7 @@ Chaque carte → même système de crédits (3 gratuits, puis 9€/29€) mais *
 - Ensuite même zone d’upload et même flux (traitement → résultat → téléchargement).
 
 ### Dépendance
+
 - Utiliser le client officiel : `@fal-ai/client` (voir [docs FAL](https://docs.fal.ai/model-apis)).  
 - Les appels se font **côté serveur** (API route Next.js) avec `FAL_KEY` en env.
 

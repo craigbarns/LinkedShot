@@ -75,7 +75,7 @@ export default function Pricing({ plans }: PricingProps) {
             </div>
           )}
           <h3 className="mb-2 text-lg font-bold text-zinc-900">{plan.name}</h3>
-          <div className="mb-6 flex items-baseline gap-1">
+          <div className="mb-2 flex items-baseline gap-1">
             <span className="text-4xl font-extrabold text-zinc-900">
               {plan.price === 0
                 ? "0"
@@ -87,6 +87,14 @@ export default function Pricing({ plans }: PricingProps) {
               / {plan.credits} image{plan.credits > 1 ? "s" : ""}
             </span>
           </div>
+          {plan.price > 0 && (
+            <p className="mb-6 text-xs text-emerald-600 font-medium">
+              {locale?.symbol === "$"
+                ? `$${(plan.price / plan.credits).toFixed(2)} per image`
+                : `€${(plan.price / plan.credits).toFixed(2)} per image`}
+            </p>
+          )}
+          {plan.price === 0 && <div className="mb-6" />}
           <ul className="mb-8 space-y-3 text-sm text-zinc-600">
             {plan.features.map((f) => (
               <li key={f} className="flex items-center gap-2">

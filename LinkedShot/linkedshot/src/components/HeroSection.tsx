@@ -1,6 +1,7 @@
 "use client";
 
 import { Star, Zap, Shield } from "lucide-react";
+import TrustBadges from "./TrustBadges";
 
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -64,6 +65,9 @@ export default function HeroSection() {
           </button>
         </div>
 
+        <div className="mt-8">
+          <TrustBadges variant="dark" />
+        </div>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-zinc-500">
           <span className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />

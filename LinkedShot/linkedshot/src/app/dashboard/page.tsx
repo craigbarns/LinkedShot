@@ -11,6 +11,7 @@ import {
   CreditCard,
   LogOut,
   FileText,
+  Gift,
 } from "lucide-react";
 
 interface Job {
@@ -39,7 +40,14 @@ function DashboardContent() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [referralUrl, setReferralUrl] = useState("");
   const checkoutSuccess = searchParams.get("checkout") === "success";
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && user) {
+      setReferralUrl(`${window.location.origin}/?ref=${user.id}`);
+    }
+  }, [user]);
 
   const fetchData = async () => {
     try {
@@ -215,6 +223,36 @@ function DashboardContent() {
             Payment successful! Your credits have been added.
           </div>
         )}
+
+        {user && (
+          <div className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-6">
+            <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold text-zinc-900">
+              <Gift className="h-5 w-5 text-emerald-600" />
+              Give 5, get 5 — Refer a friend
+            </h2>
+            <p className="mb-3 text-sm text-zinc-600">
+              Share your link. When they sign up, you each get 5 free credits.
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <code className="flex-1 rounded-lg bg-white px-3 py-2 text-sm text-zinc-800 break-all">
+                {referralUrl || "…"}
+              </code>
+              <button
+                type="button"
+                onClick={() => {
+                  if (referralUrl) {
+                    navigator.clipboard.writeText(referralUrl);
+                    alert("Link copied!");
+                  }
+                }}
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              >
+                Copy link
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="mb-8 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-zinc-900">
             New processing

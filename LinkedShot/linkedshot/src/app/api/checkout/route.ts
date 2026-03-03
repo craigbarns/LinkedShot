@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
       planId?: string;
       currency?: "eur" | "usd";
     };
+    // Allow customer to enter a promotion code (e.g. WELCOME10) at checkout
     if (!planId || !(planId in PLANS)) {
       return NextResponse.json(
         { error: "Invalid planId. Use 'starter' or 'pro'." },
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
+      allow_promotion_codes: true,
       client_reference_id: user.id,
       metadata: {
         user_id: user.id,

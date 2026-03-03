@@ -44,6 +44,8 @@ function SignInWithGoogleButton() {
 
 type ProcessMode = "amazon" | "transparent";
 
+const MAX_BULK = 10;
+
 export default function UploadZone() {
   const [mode, setMode] = useState<ProcessMode>("amazon");
   const [processing, setProcessing] = useState(false);
@@ -54,6 +56,10 @@ export default function UploadZone() {
   const [user, setUser] = useState<User | null>(null);
   const [credits, setCredits] = useState<number>(0);
   const [configError, setConfigError] = useState<string | null>(null);
+  const [queue, setQueue] = useState<File[] | null>(null);
+  const [bulkResults, setBulkResults] = useState<{ original: string; resultUrl: string }[]>([]);
+  const [bulkIndex, setBulkIndex] = useState(0);
+  const [bulkTotal, setBulkTotal] = useState(0);
 
   useEffect(() => {
     if (!processing) {
@@ -92,83 +98,103 @@ export default function UploadZone() {
     checkUser();
   }, []);
 
+  const processOneFile = useCallback(
+    async (file: File): Promise<{ original: string; resultUrl: string }> => {
+      const supabase = createClient();
+      const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : ".jpg";
+      const filePath = `${user!.id}/${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("raw")
+        .upload(filePath, file);
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from("raw").getPublicUrl(filePath);
+      const publicUrl = urlData.publicUrl;
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      const response = await fetch("/api/process", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ imageUrl: publicUrl, mode }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Processing error");
+      const resultUrl = data.resultUrl ?? data.processedUrl;
+      if (!resultUrl) throw new Error(data.error || "No result");
+      return { original: publicUrl, resultUrl };
+    },
+    [user, mode]
+  );
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
-      if (!user) {
-        return;
-      }
+      if (!user || credits <= 0) return;
+      const files = acceptedFiles.slice(0, MAX_BULK);
+      if (files.length === 0) return;
 
-      const file = acceptedFiles[0];
-      if (!file) return;
-
-      if (credits <= 0) {
-        return;
-      }
-
-      setProcessing(true);
-      setResult(null);
-      setOriginal(null);
-
-      try {
-        const supabase = createClient();
-        const ext = file.name.includes(".") ? file.name.slice(file.name.lastIndexOf(".")) : ".jpg";
-        const filePath = `${user.id}/${Date.now()}${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("raw")
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from("raw")
-          .getPublicUrl(filePath);
-        const publicUrl = urlData.publicUrl;
-        setOriginal(publicUrl);
-
-        const session = await supabase.auth.getSession();
-        const token = session.data.session?.access_token;
-
-        const response = await fetch("/api/process", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-          body: JSON.stringify({ imageUrl: publicUrl, mode }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || "Processing error");
-        }
-
-        const resultUrl = data.resultUrl ?? data.processedUrl;
-        if (resultUrl) {
-          setResult(resultUrl);
-          setCredits((c) => Math.max(0, c - 1));
-        } else {
-          throw new Error(data.error || "No result");
-        }
-      } catch (error) {
-        console.error(error);
+      if (files.length === 1) {
+        setProcessing(true);
         setResult(null);
         setOriginal(null);
-        const msg =
-          error instanceof Error ? error.message : "Something went wrong. Please try again.";
-        alert(msg);
-      } finally {
-        setProcessing(false);
+        setQueue(null);
+        setBulkResults([]);
+        try {
+          const { original: o, resultUrl: r } = await processOneFile(files[0]);
+          setOriginal(o);
+          setResult(r);
+          setCredits((c) => Math.max(0, c - 1));
+        } catch (error) {
+          console.error(error);
+          const msg = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+          alert(msg);
+        } finally {
+          setProcessing(false);
+        }
+        return;
       }
+
+      setQueue(files);
+      setBulkResults([]);
+      setBulkIndex(0);
     },
-    [user, credits, mode]
+    [user, credits, processOneFile]
   );
+
+  const startBulkProcess = useCallback(async () => {
+    if (!queue || queue.length === 0 || !user) return;
+    if (credits < queue.length) {
+      alert(`Not enough credits: you have ${credits}, need ${queue.length}. Upgrade or select fewer images.`);
+      return;
+    }
+    setProcessing(true);
+    const files = [...queue];
+    setBulkTotal(files.length);
+    setQueue(null);
+    const results: { original: string; resultUrl: string }[] = [];
+    try {
+      for (let i = 0; i < files.length; i++) {
+        setBulkIndex(i + 1);
+        const one = await processOneFile(files[i]);
+        results.push(one);
+        setBulkResults([...results]);
+        setCredits((c) => Math.max(0, c - 1));
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Bulk processing stopped.");
+    } finally {
+      setProcessing(false);
+      setBulkIndex(0);
+    }
+  }, [queue, user, credits, processOneFile]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
-    maxFiles: 1,
+    maxFiles: MAX_BULK,
     maxSize: 5 * 1024 * 1024,
     disabled: !user || credits <= 0 || processing,
   });
@@ -320,22 +346,102 @@ export default function UploadZone() {
         <input {...getInputProps()} />
         {processing ? (
           <div className="font-medium text-blue-600">
-            <p>AI processing your image…</p>
+            <p>{bulkTotal > 0 ? `Processing image ${bulkIndex} of ${bulkTotal}…` : "AI processing your image…"}</p>
             <p className="mt-1 text-sm font-normal text-zinc-500">
               ~3 seconds • {processingSeconds}s
             </p>
+            {processingSeconds >= 8 && (
+              <p className="mt-2 text-sm text-amber-600">
+                This one is taking longer — we&apos;re still working on it.
+              </p>
+            )}
           </div>
         ) : (
           <div>
             <p className="mb-2 font-medium text-zinc-700">
-              Drag an image here or click
+              Drag image(s) here or click
             </p>
             <p className="text-sm text-zinc-500">
-              JPG, PNG, WebP (max 5 MB)
+              JPG, PNG, WebP (max 5 MB) · up to {MAX_BULK} at once for bulk
             </p>
           </div>
         )}
       </div>
+
+      {queue && queue.length > 0 && !processing && (
+        <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-emerald-50 p-6">
+          <p className="mb-2 font-semibold text-zinc-800">
+            {queue.length} image{queue.length > 1 ? "s" : ""} selected (1 credit each)
+          </p>
+          <p className="mb-4 text-sm text-zinc-600">
+            {credits < queue.length
+              ? `Not enough credits: you have ${credits}, need ${queue.length}. Upgrade or drop fewer images.`
+              : "Process all now?"}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={startBulkProcess}
+              disabled={credits < queue.length}
+              className="rounded-lg bg-emerald-600 px-6 py-2.5 font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+            >
+              Process all ({queue.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setQueue(null)}
+              className="rounded-lg border-2 border-zinc-300 bg-white px-6 py-2.5 font-semibold text-zinc-700 hover:bg-zinc-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {bulkResults.length > 0 && !processing && (
+        <div className="mt-8 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-zinc-800">
+              Bulk results ({bulkResults.length} image{bulkResults.length > 1 ? "s" : ""})
+            </h3>
+            <button
+              type="button"
+              onClick={() => {
+                setBulkResults([]);
+                setOriginal(null);
+                setResult(null);
+              }}
+              className="rounded-lg border-2 border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+            >
+              Process more
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {bulkResults.map((item, idx) => (
+              <div key={idx} className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
+                <div className={`mb-2 flex aspect-square items-center justify-center overflow-hidden rounded border border-zinc-100 ${mode === "amazon" ? "bg-white" : "bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#f5f5f5_0%_50%)_50%_/16px_16px]"}`}>
+                  <img src={item.resultUrl} alt={`Result ${idx + 1}`} className="max-h-full max-w-full object-contain" />
+                </div>
+                <div className="flex gap-2">
+                  <a href={item.resultUrl} download target="_blank" rel="noopener noreferrer" className="flex-1 rounded bg-zinc-900 px-3 py-1.5 text-center text-xs font-medium text-white hover:bg-zinc-800">
+                    Download
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(item.resultUrl);
+                      alert("Link copied!");
+                    }}
+                    className="rounded border border-zinc-300 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                  >
+                    Copy link
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {original && result && (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -362,15 +468,39 @@ export default function UploadZone() {
                 className="max-h-full max-w-full object-contain"
               />
             </div>
-            <a
-              href={result}
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-block w-full rounded-lg bg-zinc-900 px-6 py-2 text-center text-sm font-medium text-white hover:bg-zinc-800"
-            >
-              Download HD
-            </a>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <a
+                href={result}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 rounded-lg bg-zinc-900 px-6 py-2.5 text-center text-sm font-medium text-white hover:bg-zinc-800"
+              >
+                Download HD
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(result);
+                  alert("Link copied to clipboard!");
+                }}
+                className="rounded-lg border-2 border-zinc-300 bg-white px-6 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+              >
+                Copy link
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOriginal(null);
+                  setResult(null);
+                  setBulkResults([]);
+                  setQueue(null);
+                }}
+                className="rounded-lg border-2 border-zinc-300 bg-white px-6 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+              >
+                Process another image
+              </button>
+            </div>
           </div>
         </div>
       )}

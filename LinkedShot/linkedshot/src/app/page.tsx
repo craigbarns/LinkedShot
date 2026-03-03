@@ -6,6 +6,10 @@ import Pricing from "@/components/Pricing";
 import ConfigBanner from "@/components/ConfigBanner";
 import HeroSection from "@/components/HeroSection";
 import StickyCta from "@/components/StickyCta";
+import LiveActivity from "@/components/LiveActivity";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
+import ReferralApply from "@/components/ReferralApply";
+import TrustBadges from "@/components/TrustBadges";
 import NavLinks from "@/components/NavLinks";
 import DashboardLinkIfAuth from "@/components/DashboardLinkIfAuth";
 import type { PricingPlan } from "@/types";
@@ -48,6 +52,7 @@ export default function Home() {
         </div>
       </header>
 
+      <ReferralApply />
       <main className="pt-0" id="main-content">
         <HeroSection />
 
@@ -243,15 +248,22 @@ export default function Home() {
             <h2 id="pricing-heading" className="text-center text-3xl font-bold text-zinc-900">
               Simple pricing
             </h2>
-            <div className="mt-14">
+            <div className="mt-6 flex justify-center">
+              <TrustBadges variant="light" />
+            </div>
+            <div className="mt-10">
               <Pricing plans={plans} />
             </div>
-            <p className="mt-10 text-center text-sm text-zinc-500">
-              ⚡ 127 sellers joined in the last 24 hours
-            </p>
+            <div className="mt-10 flex flex-col items-center gap-2">
+              <LiveActivity />
+              <p className="text-center text-sm text-zinc-500">
+                127 sellers joined in the last 24 hours
+              </p>
+            </div>
           </div>
         </section>
 
+        <ExitIntentPopup />
         <StickyCta />
 
         <footer className="border-t border-zinc-800 bg-[var(--dark-bg)] py-16 text-white" role="contentinfo">
