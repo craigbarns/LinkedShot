@@ -42,14 +42,29 @@ function SignInWithGoogleButton() {
   );
 }
 
+type ProcessMode = "amazon" | "transparent";
+
 export default function UploadZone() {
+  const [mode, setMode] = useState<ProcessMode>("amazon");
   const [processing, setProcessing] = useState(false);
+  const [processingSeconds, setProcessingSeconds] = useState(0);
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [credits, setCredits] = useState<number>(0);
   const [configError, setConfigError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!processing) {
+      setProcessingSeconds(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setProcessingSeconds((s) => s + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [processing]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -120,7 +135,7 @@ export default function UploadZone() {
             "Content-Type": "application/json",
             ...(token && { Authorization: `Bearer ${token}` }),
           },
-          body: JSON.stringify({ imageUrl: publicUrl }),
+          body: JSON.stringify({ imageUrl: publicUrl, mode }),
         });
 
         const data = await response.json();
@@ -140,11 +155,14 @@ export default function UploadZone() {
         console.error(error);
         setResult(null);
         setOriginal(null);
+        const msg =
+          error instanceof Error ? error.message : "Something went wrong. Please try again.";
+        alert(msg);
       } finally {
         setProcessing(false);
       }
     },
-    [user, credits]
+    [user, credits, mode]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -250,7 +268,31 @@ export default function UploadZone() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex rounded-lg border border-zinc-200 bg-zinc-50 p-1">
+          <button
+            type="button"
+            onClick={() => setMode("amazon")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              mode === "amazon"
+                ? "bg-white text-zinc-900 shadow-sm"
+                : "text-zinc-600 hover:text-zinc-900"
+            }`}
+          >
+            Amazon (fond blanc)
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("transparent")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              mode === "transparent"
+                ? "bg-white text-zinc-900 shadow-sm"
+                : "text-zinc-600 hover:text-zinc-900"
+            }`}
+          >
+            Fond transparent
+          </button>
+        </div>
         <span className="text-sm font-medium text-zinc-700">
           Credits remaining: {credits}
         </span>
@@ -277,9 +319,12 @@ export default function UploadZone() {
       >
         <input {...getInputProps()} />
         {processing ? (
-          <p className="font-medium text-blue-600">
-            LinkedShot AI processing…
-          </p>
+          <div className="font-medium text-blue-600">
+            <p>AI processing your image…</p>
+            <p className="mt-1 text-sm font-normal text-zinc-500">
+              ~3 seconds • {processingSeconds}s
+            </p>
+          </div>
         ) : (
           <div>
             <p className="mb-2 font-medium text-zinc-700">
@@ -306,9 +351,11 @@ export default function UploadZone() {
           </div>
           <div>
             <p className="mb-2 text-sm font-semibold text-green-700">
-              LinkedShot (white background)
+              {mode === "amazon"
+                ? "LinkedShot (white background)"
+                : "LinkedShot (transparent PNG)"}
             </p>
-            <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-white">
+            <div className={`flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border border-zinc-200 ${mode === "amazon" ? "bg-white" : "bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#f5f5f5_0%_50%)_50%_/16px_16px]"}`}>
               <img
                 src={result}
                 alt="Processed"

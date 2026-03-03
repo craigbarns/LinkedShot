@@ -57,63 +57,68 @@ export default function Pricing({ plans }: PricingProps) {
   };
 
   return (
-    <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {plans.map((plan) => (
         <div
           key={plan.id}
-          className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-xl transition-all duration-300 hover:shadow-2xl"
+          className={`group relative rounded-3xl border bg-white p-8 shadow-lg transition-all duration-300 hover:shadow-xl ${
+            plan.id === "pro"
+              ? "border-emerald-300 ring-2 ring-emerald-500/20"
+              : "border-zinc-200"
+          }`}
         >
-          <div className="-z-10 absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 opacity-0 transition-opacity group-hover:opacity-100" />
           {plan.id === "pro" && (
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-1 text-xs font-semibold text-white shadow-lg">
-                MOST POPULAR
+              <span className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-bold text-white shadow-lg">
+                POPULAIRE
               </span>
             </div>
           )}
-          <h3 className="mb-2 text-lg font-semibold text-gray-900">
-            {plan.name}
-          </h3>
-          <div className="mb-4 flex items-baseline gap-1">
-            <span className="text-4xl font-bold text-gray-900">
+          <h3 className="mb-2 text-lg font-bold text-zinc-900">{plan.name}</h3>
+          <div className="mb-6 flex items-baseline gap-1">
+            <span className="text-4xl font-extrabold text-zinc-900">
               {plan.price === 0
                 ? "0"
                 : locale?.symbol === "$"
                   ? `$${plan.price}`
                   : `${plan.price}€`}
             </span>
-            <span className="text-gray-500">
+            <span className="text-zinc-500">
               / {plan.credits} image{plan.credits > 1 ? "s" : ""}
             </span>
           </div>
-          <ul className="mb-8 space-y-3 text-sm text-gray-600">
+          <ul className="mb-8 space-y-3 text-sm text-zinc-600">
             {plan.features.map((f) => (
               <li key={f} className="flex items-center gap-2">
-                ✓ {f}
+                <span className="text-emerald-500">✓</span> {f}
               </li>
             ))}
           </ul>
           {plan.price === 0 ? (
             <Link
               href="/login"
-              className="flex w-full transform items-center justify-center rounded-xl bg-black py-3 font-semibold text-white transition hover:scale-[1.02] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              aria-label="Sign in to get 3 free images"
+              className="flex w-full items-center justify-center rounded-2xl bg-zinc-900 py-4 font-semibold text-white transition hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              aria-label="S'inscrire pour 3 images gratuites"
             >
-              Start free
+              Commencer gratuitement
             </Link>
           ) : (
             <button
               type="button"
               onClick={() => handleCheckout(plan.id)}
               disabled={loadingPlanId !== null}
-              className="flex w-full transform items-center justify-center rounded-xl bg-black py-3 font-semibold text-white transition hover:scale-[1.02] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70"
-              aria-label={`Get ${plan.credits} images for ${locale?.symbol ?? "€"}${plan.price}`}
+              className={`flex w-full items-center justify-center rounded-2xl py-4 font-semibold text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-70 ${
+                plan.id === "pro"
+                  ? "bg-emerald-500 hover:bg-emerald-400 focus:ring-emerald-500"
+                  : "bg-zinc-900 hover:bg-zinc-800 focus:ring-zinc-500"
+              }`}
+              aria-label={`${plan.credits} images pour ${locale?.symbol ?? "€"}${plan.price}`}
             >
               {loadingPlanId === plan.id
-                ? "Redirecting…"
+                ? "Redirection…"
                 : plan.id === "starter"
-                  ? "Get 50 images"
-                  : "Get 200 images"}
+                  ? "50 images"
+                  : "200 images"}
             </button>
           )}
         </div>

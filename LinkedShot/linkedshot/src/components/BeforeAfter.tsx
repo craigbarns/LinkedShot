@@ -24,10 +24,10 @@ export default function BeforeAfter() {
   const [slider, setSlider] = useState(50);
 
   return (
-    <div className="bg-zinc-50 py-20">
+    <div className="py-16">
       <div className="mx-auto max-w-6xl px-4">
         <h2 id="examples-heading" className="mb-12 text-center text-3xl font-bold text-zinc-900">
-          From Supplier Photo to Amazon Success
+          Du fournisseur à la fiche Amazon
         </h2>
 
         <div className="mb-8 grid gap-8 md:grid-cols-2">
@@ -36,9 +36,9 @@ export default function BeforeAfter() {
               key={ex.id}
               type="button"
               onClick={() => setActive(idx)}
-              className={`rounded-lg p-4 text-left transition ${
+              className={`rounded-xl p-5 text-left transition ${
                 active === idx
-                  ? "bg-white shadow-lg ring-2 ring-blue-500"
+                  ? "bg-white shadow-lg ring-2 ring-emerald-500"
                   : "bg-zinc-100 hover:bg-zinc-200"
               }`}
             >
@@ -62,9 +62,9 @@ export default function BeforeAfter() {
               />
             </div>
           </div>
-          <div className="overflow-hidden rounded-xl border-2 border-green-300 bg-white shadow-lg">
-            <p className="bg-green-600 px-4 py-2 text-center text-sm font-bold text-white">
-              After — LinkedShot (white background)
+          <div className="overflow-hidden rounded-xl border-2 border-emerald-300 bg-white shadow-lg">
+            <p className="bg-emerald-600 px-4 py-2 text-center text-sm font-bold text-white">
+              Après — LinkedShot (fond blanc)
             </p>
             <div
               className="relative flex aspect-square items-center justify-center p-4"
@@ -93,8 +93,8 @@ export default function BeforeAfter() {
               className="absolute inset-0 z-[1] h-full w-full object-contain"
               style={{ backgroundColor: "#FFFFFF" }}
             />
-            <span className="absolute right-4 top-4 z-10 rounded-full bg-green-500 px-3 py-1 text-sm font-bold text-white">
-              LinkedShot Result
+            <span className="absolute right-4 top-4 z-10 rounded-full bg-emerald-500 px-3 py-1 text-sm font-bold text-white">
+              Résultat LinkedShot
             </span>
           </div>
           <div
@@ -112,7 +112,7 @@ export default function BeforeAfter() {
             max="100"
             value={slider}
             onChange={(e) => setSlider(Number(e.target.value))}
-            className="absolute bottom-4 left-1/2 z-20 w-64 -translate-x-1/2 cursor-pointer accent-blue-600"
+            className="absolute bottom-4 left-1/2 z-20 w-64 -translate-x-1/2 cursor-pointer accent-emerald-600"
           />
         </div>
       </div>

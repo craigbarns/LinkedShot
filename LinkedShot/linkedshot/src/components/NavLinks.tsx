@@ -28,29 +28,29 @@ export default function NavLinks() {
     <nav className="flex items-center gap-6">
       <Link
         href="/login"
-        className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
+        className="text-sm font-medium text-zinc-400 transition hover:text-white"
       >
-        Sign In
+        Connexion
       </Link>
       {isAuthenticated === true && (
         <Link
           href="/dashboard"
-          className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
+          className="text-sm font-medium text-zinc-400 transition hover:text-white"
         >
           Dashboard
         </Link>
       )}
       <Link
         href="/blog"
-        className="text-sm font-medium text-gray-600 transition hover:text-gray-900"
+        className="text-sm font-medium text-zinc-400 transition hover:text-white"
       >
         Blog
       </Link>
       <Link
         href="/#upload"
-        className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
+        className="rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400"
       >
-        Get Started
+        Commencer
       </Link>
     </nav>
   );

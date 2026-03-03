@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createServiceRoleClient } from "@/lib/supabase";
 
-const FAL_URL = "https://fal.run/fal-ai/bria/background/remove";
+const FAL_ENDPOINTS = {
+  amazon: "https://fal.run/fal-ai/bria/background/remove",
+  transparent: "https://fal.run/fal-ai/imageutils/rembg",
+} as const;
+
+export type ProcessMode = keyof typeof FAL_ENDPOINTS;
 
 export async function POST(request: NextRequest) {
   const response = NextResponse.next();
@@ -36,13 +41,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { imageUrl } = body as { imageUrl?: string };
+    const { imageUrl, mode: rawMode } = body as { imageUrl?: string; mode?: string };
     if (!imageUrl || typeof imageUrl !== "string") {
       return NextResponse.json(
         { error: "imageUrl required" },
         { status: 400 }
       );
     }
+    const mode: ProcessMode =
+      rawMode === "transparent" ? "transparent" : "amazon";
+    const falUrl = FAL_ENDPOINTS[mode];
 
     const admin = createServiceRoleClient();
 
@@ -65,7 +73,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const falRes = await fetch(FAL_URL, {
+    const falRes = await fetch(falUrl, {
       method: "POST",
       headers: {
         Authorization: `Key ${process.env.FAL_KEY}`,
@@ -78,7 +86,7 @@ export async function POST(request: NextRequest) {
       const errText = await falRes.text();
       console.error("FAL error:", falRes.status, errText);
       return NextResponse.json(
-        { error: "FAL processing error" },
+        { error: "Our AI is busy or couldn't process this image. Please try again in a few seconds." },
         { status: 502 }
       );
     }
@@ -91,7 +99,7 @@ export async function POST(request: NextRequest) {
       falData.image?.url ?? falData.url ?? null;
     if (!resultImageUrl) {
       return NextResponse.json(
-        { error: "Invalid FAL response" },
+        { error: "We couldn't get a result for this image. Try another photo or try again." },
         { status: 502 }
       );
     }

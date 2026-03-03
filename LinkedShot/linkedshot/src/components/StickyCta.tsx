@@ -8,11 +8,10 @@ export default function StickyCta() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const main = document.getElementById("main-content");
       const pricing = document.getElementById("pricing");
-      if (!main || !pricing) return;
+      if (!pricing) return;
       const pricingTop = pricing.getBoundingClientRect().top;
-      const scrolledPastHero = window.scrollY > 400;
+      const scrolledPastHero = window.scrollY > 500;
       const notYetAtPricing = pricingTop > 120;
       setVisible(scrolledPastHero && notYetAtPricing);
     };
@@ -25,26 +24,26 @@ export default function StickyCta() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[var(--dark-bg)]/95 px-4 py-4 shadow-2xl backdrop-blur-xl"
       role="banner"
-      aria-label="Call to action"
+      aria-label="Appel à l'action"
     >
       <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4">
-        <p className="text-sm font-medium text-zinc-700">
-          Try 3 free images · No credit card required
+        <p className="text-sm font-medium text-zinc-300">
+          3 images gratuites · Sans carte bancaire
         </p>
         <div className="flex gap-3">
           <Link
             href="/#upload"
-            className="rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800"
+            className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-400"
           >
-            Upload free
+            Uploader gratuitement
           </Link>
           <Link
             href="/#pricing"
-            className="rounded-lg border border-zinc-300 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50"
+            className="rounded-xl border border-zinc-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
           >
-            See plans
+            Voir les offres
           </Link>
         </div>
       </div>
