@@ -52,7 +52,7 @@ const SCENE_PRESETS = [
   { label: "Outdoor garden", value: "in a beautiful outdoor garden with soft morning sunlight" },
   { label: "Studio gradient", value: "on a clean surface with a soft gradient studio background" },
   { label: "Luxury shelf", value: "on a luxury glass shelf in a high-end boutique" },
-] as const;
+] as { label: string; value: string }[];
 
 const CREDITS_PER_MODE: Record<ProcessMode, number> = {
   amazon: 1,
@@ -539,8 +539,8 @@ export default function UploadZone() {
               type="button"
               onClick={() => setMode(key)}
               className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${mode === key
-                  ? "bg-white text-zinc-900 shadow-sm"
-                  : "text-zinc-600 hover:text-zinc-900"
+                ? "bg-white text-zinc-900 shadow-sm"
+                : "text-zinc-600 hover:text-zinc-900"
                 }`}
             >
               <span className="block">{label}</span>
@@ -576,8 +576,8 @@ export default function UploadZone() {
                   type="button"
                   onClick={() => { setSceneDescription(preset.value); setCustomScene(""); }}
                   className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-all ${sceneDescription === preset.value && !customScene.trim()
-                      ? "border-emerald-500 bg-emerald-500 text-white shadow-sm"
-                      : "border-zinc-300 bg-white text-zinc-700 hover:border-emerald-400 hover:bg-emerald-50"
+                    ? "border-emerald-500 bg-emerald-500 text-white shadow-sm"
+                    : "border-zinc-300 bg-white text-zinc-700 hover:border-emerald-400 hover:bg-emerald-50"
                     }`}
                 >
                   {preset.label}
@@ -613,8 +613,8 @@ export default function UploadZone() {
                 type="button"
                 onClick={() => setUpscaleFactor(factor)}
                 className={`flex-1 rounded-lg border-2 px-4 py-3 text-center font-bold transition-all ${upscaleFactor === factor
-                    ? "border-blue-500 bg-blue-500 text-white shadow-sm"
-                    : "border-zinc-300 bg-white text-zinc-700 hover:border-blue-400"
+                  ? "border-blue-500 bg-blue-500 text-white shadow-sm"
+                  : "border-zinc-300 bg-white text-zinc-700 hover:border-blue-400"
                   }`}
               >
                 {factor}x
@@ -631,8 +631,8 @@ export default function UploadZone() {
       <div
         {...getRootProps()}
         className={`cursor-pointer rounded-xl border-2 border-dashed p-12 text-center transition-colors ${isDragActive
-            ? "border-blue-500 bg-blue-50"
-            : "border-zinc-300 bg-gray-50 hover:border-zinc-400"
+          ? "border-blue-500 bg-blue-50"
+          : "border-zinc-300 bg-gray-50 hover:border-zinc-400"
           } ${processing ? "cursor-not-allowed opacity-50" : ""}`}
       >
         <input {...getInputProps()} />
