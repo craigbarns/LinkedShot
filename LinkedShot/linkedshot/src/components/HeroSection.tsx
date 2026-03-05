@@ -95,7 +95,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="mt-5 text-lg text-zinc-400 leading-relaxed max-w-lg">
-              Remove background. Pure white <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-sm text-emerald-400 font-mono">#FFFFFF</code> or transparent PNG. 
+              Remove background. Pure white <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-sm text-emerald-400 font-mono">#FFFFFF</code> or transparent PNG.
               HD 1024×1024 — Amazon-compliant. No Photoshop, no photographer.
             </p>
 
@@ -232,46 +232,15 @@ export default function HeroSection() {
                 />
               </div>
 
-              {/* Bottom: rotating review */}
-              <div className="border-t border-zinc-800 bg-zinc-900 px-5 py-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/20 text-sm font-bold text-emerald-400">
-                    {review.author.charAt(0)}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="flex">
-                        {Array.from({ length: review.stars }).map((_, i) => (
-                          <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
-                        ))}
-                      </div>
-                      <span className="text-xs text-zinc-500">{review.author} · {review.role}</span>
-                    </div>
-                    <p className="text-sm text-zinc-300 italic">&ldquo;{review.text}&rdquo;</p>
-                  </div>
-                </div>
-                <div className="mt-3 flex justify-center gap-1.5">
-                  {REVIEWS.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setActiveReview(i)}
-                      className={`h-1.5 rounded-full transition-all ${i === activeReview ? "w-6 bg-emerald-500" : "w-1.5 bg-zinc-700"}`}
-                      aria-label={`Review ${i + 1}`}
-                    />
-                  ))}
+              {/* Price comparison strip — inline, no overlap */}
+              <div className="flex items-center justify-between border-t border-zinc-800 bg-zinc-950 px-5 py-3">
+                <p className="text-xs text-zinc-500">vs Fiverr (€2–5/img)</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-xl font-extrabold text-emerald-400">€0.18</span>
+                  <span className="text-xs text-zinc-500">/image</span>
+                  <span className="ml-2 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-bold text-emerald-400">-96%</span>
                 </div>
               </div>
-            </div>
-
-            {/* Floating price badge */}
-            <div className="absolute -bottom-4 -right-4 rounded-2xl border border-zinc-700 bg-zinc-900 p-3 shadow-2xl">
-              <p className="text-xs text-zinc-500">vs Fiverr</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-extrabold text-emerald-400">€0.18</span>
-                <span className="text-xs text-zinc-500">/image</span>
-              </div>
-              <p className="text-xs text-zinc-600 line-through">€2–5 on Fiverr</p>
             </div>
           </div>
         </div>

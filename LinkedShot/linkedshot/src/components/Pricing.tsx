@@ -12,18 +12,18 @@ type PricingProps = {
   plans: PricingPlan[];
 };
 
-// Simple countdown timer hook (fake urgency: resets every 3h)
+// SSR-safe countdown timer (initializes on client only)
 function useCountdown() {
-  const [seconds, setSeconds] = useState<number>(() => {
-    if (typeof window === "undefined") return 1800;
-    const stored = sessionStorage.getItem("ls_ctr");
-    if (stored) return parseInt(stored);
-    const init = 2400 + Math.floor(Math.random() * 600);
-    sessionStorage.setItem("ls_ctr", String(init));
-    return init;
-  });
+  const [seconds, setSeconds] = useState<number>(2400);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    const stored = sessionStorage.getItem("ls_ctr");
+    const init = stored ? parseInt(stored) : 2400 + Math.floor(Math.random() * 600);
+    if (!stored) sessionStorage.setItem("ls_ctr", String(init));
+    setSeconds(init);
+
     const t = setInterval(() => {
       setSeconds((s) => {
         const next = Math.max(0, s - 1);
@@ -34,6 +34,7 @@ function useCountdown() {
     return () => clearInterval(t);
   }, []);
 
+  if (!mounted) return "--m --s";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
@@ -89,14 +90,36 @@ export default function Pricing({ plans }: PricingProps) {
 
   return (
     <div>
-      {/* Urgency banner */}
-      <div className="mb-8 flex items-center justify-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-500/10 px-5 py-3">
-        <span className="flex h-2 w-2 rounded-full bg-amber-400">
-          <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-amber-400 opacity-75" />
-        </span>
-        <p className="text-sm font-medium text-amber-300">
-          🔥 Use code <code className="rounded bg-amber-900/40 px-1.5 py-0.5 font-mono text-amber-200">WELCOME10</code> — 10% off · Expires in <span className="font-bold text-amber-200">{countdown}</span>
-        </p>
+      {/* Urgency banner — high contrast design */}
+      <div className="mb-8 overflow-hidden rounded-2xl bg-zinc-900 shadow-lg">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 px-5 py-3.5">
+          {/* Live dot */}
+          <span className="relative flex h-2.5 w-2.5 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+          </span>
+
+          {/* Text */}
+          <p className="text-sm font-medium text-white">
+            🔥 Use code
+          </p>
+
+          {/* Code pill — impossible to miss */}
+          <span className="inline-flex items-center gap-1.5 rounded-lg border-2 border-emerald-400 bg-emerald-500/20 px-3 py-1">
+            <code className="font-mono text-base font-extrabold tracking-widest text-emerald-300">WELCOME10</code>
+          </span>
+
+          <p className="text-sm font-medium text-white">
+            for <strong className="text-emerald-400">10% off</strong>
+          </p>
+
+          {/* Timer */}
+          <span className="rounded-full bg-zinc-800 px-3 py-1 text-sm font-bold tabular-nums text-amber-400">
+            ⏱ {countdown}
+          </span>
+        </div>
+        {/* Color bar at bottom */}
+        <div className="h-0.5 w-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500" />
       </div>
 
       <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -109,8 +132,8 @@ export default function Pricing({ plans }: PricingProps) {
             <div
               key={plan.id}
               className={`group relative flex flex-col rounded-3xl border bg-white p-7 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${isPro
-                  ? "border-emerald-400 ring-2 ring-emerald-500/20"
-                  : "border-zinc-200"
+                ? "border-emerald-400 ring-2 ring-emerald-500/20"
+                : "border-zinc-200"
                 }`}
             >
               {/* MOST POPULAR badge */}
@@ -198,8 +221,8 @@ export default function Pricing({ plans }: PricingProps) {
                   onClick={() => handleCheckout(plan.id)}
                   disabled={loadingPlanId !== null}
                   className={`btn-glow relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl py-4 font-bold text-white transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-70 ${isPro
-                      ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 focus:ring-emerald-500 text-lg"
-                      : "bg-zinc-900 hover:bg-zinc-800 focus:ring-zinc-500"
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 focus:ring-emerald-500 text-lg"
+                    : "bg-zinc-900 hover:bg-zinc-800 focus:ring-zinc-500"
                     }`}
                   aria-label={`${plan.credits} images for ${locale?.symbol ?? "€"}${plan.price}`}
                 >
