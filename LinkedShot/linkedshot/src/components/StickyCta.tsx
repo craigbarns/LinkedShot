@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Zap } from "lucide-react";
 
 export default function StickyCta() {
   const [visible, setVisible] = useState(false);
+  const [compact, setCompact] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const pricing = document.getElementById("pricing");
       if (!pricing) return;
       const pricingTop = pricing.getBoundingClientRect().top;
-      const scrolledPastHero = window.scrollY > 500;
+      const scrolledPastHero = window.scrollY > 600;
       const notYetAtPricing = pricingTop > 120;
       setVisible(scrolledPastHero && notYetAtPricing);
+      setCompact(window.scrollY > 1200);
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -24,26 +27,37 @@ export default function StickyCta() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[var(--dark-bg)]/95 px-4 py-4 shadow-2xl backdrop-blur-xl"
+      className="sticky-slide fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[var(--dark-bg)]/97 px-4 shadow-2xl shadow-black/60 backdrop-blur-xl"
       role="banner"
       aria-label="Call to action"
     >
-      <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4">
-        <p className="text-sm font-medium text-zinc-300">
-          3 free images · No credit card
-        </p>
-        <div className="flex gap-3">
+      {/* Gradient line at top */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+
+      <div className={`mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 ${compact ? "py-2.5" : "py-3.5"}`}>
+        {compact ? (
+          <p className="text-sm font-medium text-zinc-400 hidden sm:block">
+            🎁 Code <code className="rounded bg-zinc-800 px-1 text-emerald-400 font-mono text-xs">WELCOME10</code> → 10% off
+          </p>
+        ) : (
+          <div>
+            <p className="text-sm font-bold text-white">Try LinkedShot free — no credit card</p>
+            <p className="text-xs text-zinc-500">3 free images · Amazon-compliant HD PNG · ~3 seconds</p>
+          </div>
+        )}
+        <div className="flex gap-2.5">
           <Link
             href="/#upload"
-            className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-emerald-400"
+            className="btn-glow inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-400"
           >
-            Upload free
+            <Zap className="h-3.5 w-3.5" />
+            Try free
           </Link>
           <Link
             href="/#pricing"
-            className="rounded-xl border border-zinc-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
+            className="rounded-xl border border-zinc-600 bg-transparent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/5"
           >
-            See pricing
+            Pricing
           </Link>
         </div>
       </div>
