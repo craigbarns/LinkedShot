@@ -9,7 +9,7 @@ export default function Article2Content() {
         Professional Amazon photography studios charge $300-$500 per product. For FBA sellers with tight margins, that&apos;s impossible.
       </p>
 
-      <p>The good news? You don&apos;t need a DSLR camera, studio lights, or Photoshop skills to get Amazon-compliant photos in 2024. Here&apos;s how to do it for under $10.</p>
+      <p>The good news? You don&apos;t need a DSLR camera, studio lights, or Photoshop skills to get Amazon-compliant photos in 2025. Here&apos;s how to do it for under $10.</p>
 
       <h2>Option 1: The DIY Studio Setup (Budget: $50-$100)</h2>
 
@@ -45,7 +45,7 @@ export default function Article2Content() {
 
       <h2>Option 3: AI Automation (Budget: $0.18/image)</h2>
 
-      <p>The fastest method in 2024: Upload your supplier&apos;s messy photo, get an Amazon-compliant result in 3 seconds.</p>
+      <p>The fastest method in 2025: Upload your supplier&apos;s messy photo, get an Amazon-compliant result in 3 seconds.</p>
 
       <h3>How It Works</h3>
       <ol>

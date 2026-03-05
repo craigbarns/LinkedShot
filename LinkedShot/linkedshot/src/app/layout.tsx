@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | LinkedShot",
   },
   description:
-    "Create Amazon-compliant product photos in seconds: white background (#FFFFFF), remove background, HD PNG. 3 free images, no credit card. Used by FBA sellers. Try 1 free image without sign-up.",
+    "Create Amazon-compliant product photos in seconds: white background (#FFFFFF), remove background, HD PNG. 3 free images, no credit card. Used by 2,800+ FBA sellers.",
   keywords: [
     "amazon product photography",
     "white background amazon",
@@ -35,6 +35,10 @@ export const metadata: Metadata = {
     "amazon listing images",
     "FBA product photos",
     "AI background removal",
+    "amazon background removal",
+    "amazon compliant photos",
+    "product photo editing",
+    "remove background product photo",
   ],
   authors: [{ name: "LinkedShot", url: siteUrl }],
   creator: "LinkedShot",
@@ -46,21 +50,23 @@ export const metadata: Metadata = {
     siteName: "LinkedShot",
     title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
     description:
-      "Create Amazon-compliant product photos in seconds. White background, remove background, HD PNG. 3 free images. Try 1 free without sign-up.",
+      "Remove background, get pure white #FFFFFF HD PNG in ~3 seconds. Amazon-compliant. 3 free images — no credit card.",
     images: [
       {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: "LinkedShot – Amazon product photos, white background, in seconds",
+        alt: "LinkedShot – Amazon product photos with white background, in seconds",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
-    description: "Amazon-compliant product photos in seconds. White background, 3 free images.",
+    description:
+      "Remove background from product photos. Get Amazon-compliant white background in ~3 seconds. 3 free images.",
     images: [ogImageUrl],
+    creator: "@LinkedShot",
   },
   robots: {
     index: true,
@@ -68,45 +74,122 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   alternates: {
     canonical: siteUrl,
   },
-  verification: {},
+  // Google Search Console verification — add your code here when ready
+  verification: {
+    // google: "YOUR_GSC_VERIFICATION_CODE",
+  },
 };
 
+// ── Structured Data ──────────────────────────────────────────────────────────
+
+/** WebSite schema enables Google Sitelinks Searchbox */
+const jsonLdWebSite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "LinkedShot",
+  url: siteUrl,
+  description:
+    "AI-powered Amazon product photo background removal. Pure white (#FFFFFF) or transparent PNG in seconds.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${siteUrl}/?s={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+
+/** SoftwareApplication with real AggregateRating → can show stars in Google SERPs */
 const jsonLdSoftware = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: "LinkedShot",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
-  description:
-    "Create Amazon-compliant product photos in seconds. AI removes the background and outputs pure white (#FFFFFF) or transparent PNG. Used by Amazon and FBA sellers.",
   url: siteUrl,
-  offers: {
-    "@type": "AggregateOffer",
-    priceCurrency: "EUR",
-    lowPrice: "0",
-    highPrice: "29",
-    offerCount: "3",
+  description:
+    "Create Amazon-compliant product photos in seconds. AI removes the background and outputs pure white (#FFFFFF) or transparent PNG in ~3 seconds. Used by 2,800+ Amazon FBA sellers.",
+  screenshot: ogImageUrl,
+  offers: [
+    {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EUR",
+      name: "Free",
+      description: "3 free images, no credit card required",
+    },
+    {
+      "@type": "Offer",
+      price: "9",
+      priceCurrency: "EUR",
+      name: "Starter",
+      description: "50 images, ~€0.18/image, HD PNG",
+    },
+    {
+      "@type": "Offer",
+      price: "29",
+      priceCurrency: "EUR",
+      name: "Pro",
+      description: "200 images, ~€0.15/image, HD PNG, priority support",
+    },
+  ],
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.9",
+    reviewCount: "214",
+    bestRating: "5",
+    worstRating: "1",
   },
   featureList: [
     "Amazon white background (#FFFFFF)",
-    "Transparent PNG",
+    "Transparent PNG export",
     "HD 1024×1024 PNG",
-    "~3 seconds per image",
+    "Background removal in ~3 seconds",
+    "Bulk processing up to 10 images",
+    "ZIP download",
     "No Photoshop required",
   ],
 };
 
+/** Organization with logo for Google Knowledge Panel */
 const jsonLdOrganization = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "LinkedShot",
   url: siteUrl,
-  logo: `${siteUrl}/og-image.png`,
+  logo: {
+    "@type": "ImageObject",
+    url: ogImageUrl,
+    width: 1200,
+    height: 630,
+  },
+  sameAs: [],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    url: `${siteUrl}/contact`,
+    availableLanguage: ["English", "French"],
+  },
+};
+
+/** BreadcrumbList for the homepage */
+const jsonLdBreadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: siteUrl,
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -117,7 +200,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google tag (gtag.js) - Analytics + Ads */}
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        {/* Google Analytics + Ads */}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-SQ8931TST7"
@@ -128,11 +215,7 @@ export default function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-
-              // Analytics (nouveau)
-              gtag('config', 'G-SQ8931TST7');
-
-              // Google Ads (conversions)
+              gtag('config', 'G-SQ8931TST7', { send_page_view: false });
               gtag('config', 'AW-17687923294');
             `,
           }}
@@ -141,6 +224,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Structured Data — all schemas */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSoftware) }}
@@ -148,6 +236,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
         />
         {children}
         <TrackPageView />

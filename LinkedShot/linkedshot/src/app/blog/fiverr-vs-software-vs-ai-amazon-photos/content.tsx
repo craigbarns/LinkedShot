@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Article3Content() {
   return (
     <article className="space-y-6 text-zinc-700 [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-700 [&_table]:w-full [&_th]:border [&_th]:border-zinc-300 [&_th]:bg-zinc-100 [&_th]:px-4 [&_th]:py-2 [&_td]:border [&_td]:border-zinc-200 [&_td]:px-4 [&_td]:py-2">
-      <h1>Fiverr vs Photoshop vs AI: Best Way to Edit Amazon Product Photos (2024)</h1>
+      <h1>Fiverr vs Photoshop vs AI: Best Way to Edit Amazon Product Photos (2025)</h1>
 
       <p>You have 50 supplier photos that need white backgrounds for Amazon. Three options:</p>
       <ol>
@@ -160,7 +160,7 @@ export default function Article3Content() {
 
       <hr className="my-8 border-zinc-200" />
       <p className="text-sm text-zinc-500">
-        <em>Update: Fiverr prices increased in 2024. Basic background removal now starts at $4-5, with most sellers charging $7-10 for &quot;Amazon-optimized&quot; editing.</em>
+        <em>Update: Fiverr prices increased in 2025. Basic background removal now starts at $4-5, with most sellers charging $7-10 for &quot;Amazon-optimized&quot; editing.</em>
       </p>
     </article>
   );
