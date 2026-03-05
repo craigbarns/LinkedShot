@@ -385,7 +385,7 @@ export default function UploadZone() {
         <div className="space-y-6 rounded-xl border-2 border-zinc-200 bg-gray-50 p-8">
           <p className="text-center text-lg font-semibold text-zinc-800">Your result (white background)</p>
           <div className="mx-auto flex max-w-sm justify-center rounded-lg border border-zinc-200 bg-white p-2">
-            <img src={anonymousResult} alt="Processed" className="max-h-80 w-full object-contain" />
+            <img src={anonymousResult} alt="Processed Amazon product photo with white background" className="max-h-80 w-full object-contain" />
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             <a
@@ -802,7 +802,7 @@ export default function UploadZone() {
             <div className={`flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border border-zinc-200 ${mode === "amazon" ? "bg-white" : "bg-[repeating-conic-gradient(#e5e5e5_0%_25%,#f5f5f5_0%_50%)_50%_/16px_16px]"}`}>
               <img
                 src={result}
-                alt="Processed"
+                alt="Processed Amazon product photo with white background"
                 className="max-h-full max-w-full object-contain"
               />
             </div>

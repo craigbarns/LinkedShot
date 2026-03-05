@@ -288,9 +288,8 @@ function DashboardContent() {
             New processing
           </h2>
           <label
-            className={`block cursor-pointer rounded-xl border-2 border-dashed border-zinc-300 p-12 text-center transition hover:border-blue-500 hover:bg-blue-50 ${
-              uploading ? "opacity-50" : ""
-            }`}
+            className={`block cursor-pointer rounded-xl border-2 border-dashed border-zinc-300 p-12 text-center transition hover:border-blue-500 hover:bg-blue-50 ${uploading ? "opacity-50" : ""
+              }`}
           >
             <input
               type="file"
@@ -355,7 +354,7 @@ function DashboardContent() {
                   {job.processed_path ? (
                     <img
                       src={getProcessedUrl(job.processed_path)}
-                      alt="Result"
+                      alt="Processed Amazon product photo with white background"
                       className="max-h-full max-w-full object-contain bg-white"
                     />
                   ) : (
@@ -367,11 +366,10 @@ function DashboardContent() {
                 <div className="p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        job.status === "done"
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${job.status === "done"
                           ? "bg-green-100 text-green-700"
                           : "bg-amber-100 text-amber-700"
-                      }`}
+                        }`}
                     >
                       {job.status === "done" ? "Done" : "In progress"}
                     </span>

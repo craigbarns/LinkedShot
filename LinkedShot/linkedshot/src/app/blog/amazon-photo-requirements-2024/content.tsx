@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function Article1Content() {
   return (
     <article className="space-y-6 text-zinc-700 [&_h1]:text-3xl [&_h1]:font-bold [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-700">
-      <h1>Amazon Product Photo Requirements 2024: The Complete Compliance Guide</h1>
+      <h1>Amazon Product Photo Requirements 2025: The Complete Compliance Guide</h1>
 
       <p>
-        Getting your Amazon listing suspended because of a non-compliant main image is a nightmare for any FBA seller. Amazon&apos;s algorithm is stricter than ever in 2024, rejecting photos that don&apos;t meet exact specifications.
+        Getting your Amazon listing suspended because of a non-compliant main image is a nightmare for any FBA seller. Amazon&apos;s algorithm is stricter than ever in 2025, rejecting photos that don&apos;t meet exact specifications.
       </p>
 
       <p>Here&apos;s everything you need to know to keep your listings live and converting.</p>
@@ -81,7 +81,7 @@ export default function Article1Content() {
 
       <hr className="my-8 border-zinc-200" />
       <p className="text-sm text-zinc-500">
-        <em>Last updated: 2024. Amazon guidelines change frequently—always check Seller Central for the latest updates.</em>
+        <em>Last updated: 2025. Amazon guidelines change frequently—always check Seller Central for the latest updates.</em>
       </p>
     </article>
   );
