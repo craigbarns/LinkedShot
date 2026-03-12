@@ -7,17 +7,17 @@ const slug = "amazon-photo-requirements-2024";
 const canonicalUrl = `${siteUrl}/blog/${slug}`;
 
 export const metadata: Metadata = {
-  title: "Amazon Product Photo Requirements 2025: Complete Guide to Compliance",
+  title: "Amazon Product Photo Requirements 2026: Complete Guide to Compliance",
   description:
-    "Complete guide to Amazon image requirements 2025: size, pure white background (#FFFFFF), shadows, and formats. Avoid listing suppression with these rules.",
+    "Complete guide to Amazon image requirements 2026: size, pure white background (#FFFFFF), shadows, and formats. Avoid listing suppression with these rules.",
   openGraph: {
-    title: "Amazon Product Photo Requirements 2025: Complete Guide to Compliance",
+    title: "Amazon Product Photo Requirements 2026: Complete Guide to Compliance",
     description:
-      "Complete guide to Amazon image requirements 2025: size, pure white background (#FFFFFF), shadows, and formats. Avoid listing suppression.",
+      "Complete guide to Amazon image requirements 2026: size, pure white background (#FFFFFF), shadows, and formats. Avoid listing suppression.",
     type: "article",
     url: canonicalUrl,
-    publishedTime: "2025-01-10T00:00:00Z",
-    modifiedTime: "2025-03-01T00:00:00Z",
+    publishedTime: "2026-01-10T00:00:00Z",
+    modifiedTime: "2026-03-01T00:00:00Z",
     authors: ["LinkedShot"],
     tags: ["amazon photo requirements", "white background amazon", "FBA photos"],
   },
@@ -27,12 +27,12 @@ export const metadata: Metadata = {
 const jsonLdArticle = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Amazon Product Photo Requirements 2025: Complete Guide to Compliance",
+  headline: "Amazon Product Photo Requirements 2026: Complete Guide to Compliance",
   description:
-    "Complete guide to Amazon image requirements 2025: size, pure white background (#FFFFFF), shadows, and formats.",
+    "Complete guide to Amazon image requirements 2026: size, pure white background (#FFFFFF), shadows, and formats.",
   url: canonicalUrl,
-  datePublished: "2025-01-10T00:00:00Z",
-  dateModified: "2025-03-01T00:00:00Z",
+  datePublished: "2026-01-10T00:00:00Z",
+  dateModified: "2026-03-01T00:00:00Z",
   author: { "@type": "Organization", name: "LinkedShot", url: siteUrl },
   publisher: {
     "@type": "Organization",
@@ -56,7 +56,7 @@ const jsonLdBreadcrumb = {
     {
       "@type": "ListItem",
       position: 3,
-      name: "Amazon Product Photo Requirements 2025",
+      name: "Amazon Product Photo Requirements 2026",
       item: canonicalUrl,
     },
   ],
@@ -79,7 +79,7 @@ export default function Page() {
           <li aria-hidden className="text-zinc-300">/</li>
           <li><Link href="/blog" className="hover:text-zinc-900">Blog</Link></li>
           <li aria-hidden className="text-zinc-300">/</li>
-          <li className="text-zinc-700">Amazon Photo Requirements 2025</li>
+          <li className="text-zinc-700">Amazon Photo Requirements 2026</li>
         </ol>
       </nav>
       <Article1Content />
@@ -93,7 +93,7 @@ export default function Page() {
         <p className="text-sm text-zinc-500">
           Also read:{" "}
           <Link href="/blog/fiverr-vs-software-vs-ai-amazon-photos" className="text-emerald-600 underline hover:text-emerald-700">
-            Fiverr vs AI for Amazon photos (2025 comparison)
+            Fiverr vs AI for Amazon photos (2026 comparison)
           </Link>
           {" · "}
           <Link href="/blog/amazon-product-photography-without-photographer" className="text-emerald-600 underline hover:text-emerald-700">

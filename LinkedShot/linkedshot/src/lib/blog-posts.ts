@@ -1,5 +1,27 @@
 export const BLOG_POSTS = [
   {
+    slug: "remove-background-product-photo-amazon",
+    title: "How to Remove Background from Product Photos for Amazon (2026 Guide)",
+    description:
+      "5 methods to remove background from product photos for Amazon: Photoshop, Remove.bg, Canva, Fiverr, and AI. Compare cost, speed, and quality.",
+    date: "2026-03-01",
+    updatedDate: "2026-03-12",
+    readingTime: 10,
+    category: "Product Photography",
+    tags: ["remove background", "product photo", "amazon white background", "background removal"],
+  },
+  {
+    slug: "best-amazon-product-photo-size",
+    title: "Best Amazon Product Photo Size in 2026: Dimensions, Format & Specs",
+    description:
+      "Amazon product image size guide 2026: minimum 1000×1000px, recommended 2000×2000px. PNG vs JPEG, aspect ratio, zoom requirements.",
+    date: "2026-02-20",
+    updatedDate: "2026-03-12",
+    readingTime: 7,
+    category: "Amazon Compliance",
+    tags: ["amazon product photo size", "amazon image dimensions", "amazon image requirements"],
+  },
+  {
     slug: "amazon-photo-requirements-2024",
     title: "Amazon Product Photo Requirements 2026: Complete Guide to Compliance",
     description:

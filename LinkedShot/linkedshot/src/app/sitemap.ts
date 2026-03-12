@@ -22,6 +22,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Blog articles — high-value SEO pages
     {
+      url: `${baseUrl}/blog/remove-background-product-photo-amazon`,
+      lastModified: new Date("2026-03-12"),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/blog/best-amazon-product-photo-size`,
+      lastModified: new Date("2026-03-12"),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/blog/amazon-photo-requirements-2024`,
       lastModified: new Date("2026-03-10"),
       changeFrequency: "monthly",
