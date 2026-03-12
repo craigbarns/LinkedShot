@@ -22,6 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Blog articles — high-value SEO pages
     {
+      url: `${baseUrl}/blog/photoroom-vs-linkedshot`,
+      lastModified: new Date("2026-03-12"),
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/blog/remove-background-product-photo-amazon`,
       lastModified: new Date("2026-03-12"),
       changeFrequency: "monthly",

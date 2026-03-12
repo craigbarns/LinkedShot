@@ -1,5 +1,16 @@
 export const BLOG_POSTS = [
   {
+    slug: "photoroom-vs-linkedshot",
+    title: "PhotoRoom vs LinkedShot: Which is Best for Your Amazon Business?",
+    description:
+      "Honest comparison between PhotoRoom and LinkedShot. Which tool handles Amazon's #FFFFFF white background better and offers better value?",
+    date: "2026-03-12",
+    updatedDate: "2026-03-12",
+    readingTime: 8,
+    category: "Market Comparison",
+    tags: ["photoroom alternative", "photoroom vs linkedshot", "amazon product photos"],
+  },
+  {
     slug: "remove-background-product-photo-amazon",
     title: "How to Remove Background from Product Photos for Amazon (2026 Guide)",
     description:
