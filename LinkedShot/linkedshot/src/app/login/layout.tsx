@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In",
-  description:
-    "Sign in to LinkedShot to process product photos with AI. Get white background images for Amazon in seconds.",
-  robots: { index: true, follow: true },
-  alternates: { canonical: "/login" },
+  title: "Sign In | LinkedShot",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function LoginLayout({
   children,
-}: { children: React.ReactNode }) {
-  return children;
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }

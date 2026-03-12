@@ -23,19 +23,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Blog articles — high-value SEO pages
     {
       url: `${baseUrl}/blog/amazon-photo-requirements-2024`,
-      lastModified: new Date("2025-03-01"),
+      lastModified: new Date("2026-03-10"),
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
       url: `${baseUrl}/blog/amazon-product-photography-without-photographer`,
-      lastModified: new Date("2025-03-01"),
+      lastModified: new Date("2026-03-10"),
       changeFrequency: "monthly",
       priority: 0.85,
     },
     {
       url: `${baseUrl}/blog/fiverr-vs-software-vs-ai-amazon-photos`,
-      lastModified: new Date("2025-03-01"),
+      lastModified: new Date("2026-03-10"),
       changeFrequency: "monthly",
       priority: 0.85,
     },
@@ -49,23 +49,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Legal — low crawl priority
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date("2025-01-01"),
+      lastModified: new Date("2026-01-01"),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified: new Date("2025-01-01"),
+      lastModified: new Date("2026-01-01"),
       changeFrequency: "yearly",
       priority: 0.3,
     },
-    // Login — for indexing (not blocked), low priority
-    {
-      url: `${baseUrl}/login`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    // NOTE: /dashboard is excluded (requires auth, no SEO value)
+    // NOTE: /login and /dashboard excluded — no SEO value, causes canonical issues
   ];
 }

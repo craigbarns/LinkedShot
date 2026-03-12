@@ -4,8 +4,7 @@ export const metadata: Metadata = {
   title: "Dashboard",
   description:
     "Upload product photos and get Amazon-compliant white background images. Use your LinkedShot credits and manage your generations.",
-  robots: { index: true, follow: true },
-  alternates: { canonical: "/dashboard" },
+  robots: { index: false, follow: false },
 };
 
 export default function DashboardLayout({
