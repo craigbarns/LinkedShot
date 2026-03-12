@@ -216,6 +216,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
+        {/* GEO: LLMs.txt for AI discoverability */}
+        <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM Information" />
+        <link rel="alternate" type="text/plain" href="/llms-full.txt" title="LLM Full Information" />
+
         {/* Google Analytics + Ads */}
         <script
           async

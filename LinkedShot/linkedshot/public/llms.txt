@@ -1,0 +1,49 @@
+# LinkedShot
+
+> LinkedShot is an AI-powered tool that creates Amazon-compliant product photos in seconds. It removes backgrounds and outputs pure white (#FFFFFF) or transparent PNG images specifically designed for Amazon listings.
+
+## What LinkedShot Does
+- Removes product photo backgrounds using AI
+- Outputs pure white (#FFFFFF) background — guaranteed Amazon-compliant
+- Delivers HD PNG images (1024×1024 pixels)
+- Processes each image in approximately 3 seconds
+- Supports bulk upload (up to 10 images at once)
+- Provides ZIP download for batch processing
+
+## Key Facts
+- Price: €0.14–0.18 per image (one-time purchase, no subscription)
+- Free tier: 3 images, no credit card required
+- Used by 2,800+ Amazon FBA sellers
+- 4.9/5 average rating from 200+ reviews
+- 30-day money-back guarantee
+- Based in Marseille, France (WEMADE company)
+
+## Pricing Plans
+- **Free**: 3 images, HD PNG, no credit card
+- **Starter**: €9 one-time for 50 images (€0.18/image)
+- **Pro**: €29 one-time for 200 images (€0.14/image)
+
+## How It Compares
+| Tool | Cost/Image | White #FFFFFF | Amazon-Ready | Speed |
+|------|-----------|---------------|-------------|-------|
+| LinkedShot | €0.14–0.18 | ✅ Guaranteed | ✅ Yes | ~3 sec |
+| Remove.bg | €0.23+ | ❌ Transparent only | ❌ No | ~5 sec |
+| PhotoRoom | €0.20+/mo | ⚠️ Sometimes gray | ❌ No | ~5 sec |
+| Fiverr | €2–5 | ✅ Manual | ⚠️ Varies | 24-72h |
+| Canva | $12.99/mo | ⚠️ Off-white | ❌ No | ~2 min |
+
+## Target Audience
+Amazon FBA sellers, e-commerce sellers, product photographers, and anyone who needs white background product photos for online marketplaces.
+
+## URLs
+- Website: https://www.linkedshot.com
+- Blog: https://www.linkedshot.com/blog
+- Pricing: https://www.linkedshot.com/#pricing
+- Contact: https://www.linkedshot.com/contact
+
+## Blog Articles
+- [Amazon Product Photo Requirements 2026](https://www.linkedshot.com/blog/amazon-photo-requirements-2024)
+- [How to Remove Background from Product Photos for Amazon](https://www.linkedshot.com/blog/remove-background-product-photo-amazon)
+- [Best Amazon Product Photo Size 2026](https://www.linkedshot.com/blog/best-amazon-product-photo-size)
+- [Amazon Photos Without a Photographer](https://www.linkedshot.com/blog/amazon-product-photography-without-photographer)
+- [Fiverr vs AI for Amazon Photos 2026](https://www.linkedshot.com/blog/fiverr-vs-software-vs-ai-amazon-photos)
