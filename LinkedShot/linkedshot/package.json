@@ -10,6 +10,7 @@
     "create-admin-user": "node scripts/create-admin-user.mjs"
   },
   "dependencies": {
+    "@next/third-parties": "^16.1.6",
     "@stripe/stripe-js": "^8.7.0",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
