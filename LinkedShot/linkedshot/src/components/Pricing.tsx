@@ -172,7 +172,7 @@ export default function Pricing({ plans }: PricingProps) {
                   {locale?.symbol === "$"
                     ? `$${(plan.price / plan.credits).toFixed(2)}`
                     : `€${(plan.price / plan.credits).toFixed(2)}`}{" "}
-                  per image
+                  per credit
                   {isPro && (
                     <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">
                       Best value
@@ -193,15 +193,15 @@ export default function Pricing({ plans }: PricingProps) {
                   <>
                     <li className="flex items-center gap-2.5">
                       <CheckCircle className="h-4 w-4 flex-shrink-0 text-emerald-500" />
-                      <span>Amazon-compliant output</span>
+                      <span>Amazon-compliant output & HD 4K</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <CheckCircle className="h-4 w-4 flex-shrink-0 text-emerald-500" />
-                      <span>Bulk upload (up to 10 at once)</span>
+                      <span>Unlocks all AI lifestyle generation</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <CheckCircle className="h-4 w-4 flex-shrink-0 text-emerald-500" />
-                      <span>ZIP download</span>
+                      <span>Bulk processing & ZIP downloads</span>
                     </li>
                   </>
                 )}
@@ -224,7 +224,7 @@ export default function Pricing({ plans }: PricingProps) {
                     ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 focus:ring-emerald-500 text-lg"
                     : "bg-zinc-900 hover:bg-zinc-800 focus:ring-zinc-500"
                     }`}
-                  aria-label={`${plan.credits} images for ${locale?.symbol ?? "€"}${plan.price}`}
+                  aria-label={`${plan.credits} credits for ${locale?.symbol ?? "€"}${plan.price}`}
                 >
                   {loadingPlanId === plan.id ? (
                     <span className="flex items-center gap-2">
@@ -237,7 +237,7 @@ export default function Pricing({ plans }: PricingProps) {
                   ) : (
                     <>
                       <Zap className="h-4 w-4" />
-                      {isPro ? `Get ${plan.credits} images` : `Get ${plan.credits} images`}
+                      Get {plan.credits} credits
                     </>
                   )}
                 </button>

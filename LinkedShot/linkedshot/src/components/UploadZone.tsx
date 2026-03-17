@@ -399,7 +399,7 @@ export default function UploadZone() {
             </a>
             <div className="w-full text-center">
               <p className="mb-3 text-sm font-medium text-zinc-700">
-                Create an account to get 2 more free images (3 total).
+                Create an account to get 2 more free credits (3 total).
               </p>
               <SignInWithGoogleButton />
               <p className="mt-2 text-sm text-zinc-500">
@@ -415,10 +415,10 @@ export default function UploadZone() {
       return (
         <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-gray-50 p-8 text-center">
           <p className="mb-1 text-lg font-semibold text-zinc-800">
-            You&apos;ve used your 1 free image
+            You&apos;ve used your 1 free credit
           </p>
           <p className="mb-6 text-sm text-zinc-600">
-            Create an account to get 2 more free images (3 total). No credit card.
+            Create an account to get 2 more free credits (3 total). No credit card.
           </p>
           <SignInWithGoogleButton />
           <p className="mt-3 text-sm text-zinc-500">
@@ -431,10 +431,10 @@ export default function UploadZone() {
     return (
       <div className="rounded-xl border-2 border-dashed border-zinc-300 bg-gray-50 p-8 text-center">
         <p className="mb-1 text-lg font-semibold text-zinc-800">
-          Try 1 free image (no account)
+          Try 1 free credit (no account)
         </p>
         <p className="mb-6 text-sm text-zinc-600">
-          Drag an image below. We&apos;ll remove the background. Then create an account to get 2 more free.
+          Drag an image below to test our AI. Then create an account to get 2 more free credits.
         </p>
         <div
           {...getAnonRootProps()}
@@ -497,27 +497,75 @@ export default function UploadZone() {
 
   if (credits === 0 && !result) {
     return (
-      <div className="py-12 text-center">
-        <div className="mb-4 text-4xl">🎉</div>
-        <h3 className="mb-2 text-xl font-bold text-zinc-900">
-          You used your 3 free credits!
-        </h3>
-        <p className="mb-6 text-gray-600">
-          Ready to process your entire catalog?
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <button
-            type="button"
-            onClick={handleUpgradeStarter}
-            disabled={upgradeLoading}
-            className="rounded-lg bg-black px-6 py-3 font-semibold text-white hover:bg-gray-800 disabled:opacity-70"
-          >
-            {upgradeLoading ? "Redirecting…" : "Upgrade to Starter (9€ or $9)"}
-          </button>
+      <div className="mx-auto mt-8 max-w-2xl overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-xl">
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-8 text-center text-white">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 text-3xl shadow-inner shadow-white/10 backdrop-blur-sm">
+            ✨
+          </div>
+          <h3 className="mb-2 text-2xl font-black tracking-tight text-white">
+            You&apos;ve used your free credits!
+          </h3>
+          <p className="text-emerald-50">
+            Join 5,000+ top sellers using LinkedShot AI Studio to boost sales.
+          </p>
         </div>
-        <p className="mt-4 text-sm text-gray-500">
-          50 images • ~€0.18 per image
-        </p>
+
+        <div className="p-8">
+          <div className="mb-8 rounded-xl border-2 border-dashed border-emerald-200 bg-emerald-50 p-4 text-center">
+            <p className="mb-2 text-sm font-semibold text-emerald-800">
+              🔥 Special Offer: 10% off your first pack
+            </p>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm text-emerald-600">Use code</span>
+              <code className="rounded bg-white px-3 py-1 font-mono font-bold text-emerald-700 shadow-sm">
+                WELCOME10
+              </code>
+              <span className="text-sm text-emerald-600">at checkout</span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <button
+              type="button"
+              onClick={handleUpgradeStarter}
+              disabled={upgradeLoading}
+              className="btn-glow flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-emerald-500/30 hover:from-emerald-400 hover:to-teal-400 disabled:opacity-70 transition-all duration-300"
+            >
+              {upgradeLoading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="h-5 w-5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Redirecting to Stripe…
+                </span>
+              ) : (
+                <>Get 50 Credits for €9 (Most Popular)</>
+              )}
+            </button>
+            <Link
+              href="/#pricing"
+              className="block w-full rounded-xl border border-zinc-200 bg-zinc-50 px-6 py-4 text-center font-semibold text-zinc-700 transition hover:bg-zinc-100 hover:text-zinc-900"
+            >
+              View all plans (Pro, Enterprise) →
+            </Link>
+          </div>
+
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 border-t border-zinc-100 pt-6 sm:flex-row sm:gap-8">
+            <div className="flex items-center gap-2 text-sm font-medium text-zinc-500">
+              <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Secure Stripe Payment
+            </div>
+            <div className="flex items-center gap-2 text-sm font-medium text-zinc-500">
+              <svg className="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              30-Day Money-Back Guarantee
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -837,7 +885,7 @@ export default function UploadZone() {
                 }}
                 className="rounded-lg border-2 border-zinc-300 bg-white px-6 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
               >
-                Process another image
+                Process another photo
               </button>
             </div>
           </div>
@@ -850,7 +898,7 @@ export default function UploadZone() {
             You used your 3 free credits!
           </p>
           <p className="mb-4 text-sm text-zinc-600">
-            Ready to process more? Upgrade to Starter for 50 images.
+            Ready for more Studio features? Upgrade to Starter for 50 credits.
           </p>
           <button
             type="button"
@@ -858,7 +906,7 @@ export default function UploadZone() {
             disabled={upgradeLoading}
             className="inline-block rounded-lg bg-black px-6 py-2.5 font-semibold text-white hover:bg-zinc-800 disabled:opacity-70"
           >
-            {upgradeLoading ? "Redirecting…" : "Upgrade to Starter (9€ or $9)"}
+            {upgradeLoading ? "Redirecting…" : "Get 50 Credits (9€ or $9)"}
           </button>
         </div>
       )}

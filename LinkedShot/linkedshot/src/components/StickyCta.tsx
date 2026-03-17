@@ -41,8 +41,8 @@ export default function StickyCta() {
           </p>
         ) : (
           <div>
-            <p className="text-sm font-bold text-white">Try LinkedShot free — no credit card</p>
-            <p className="text-xs text-zinc-500">3 free images · Amazon-compliant HD PNG · ~3 seconds</p>
+            <p className="text-sm font-bold text-white">Try LinkedShot AI Studio free — no credit card</p>
+            <p className="text-xs text-zinc-500">3 free credits · AI Lifestyle · 4K Upscale · White Backgrounds</p>
           </div>
         )}
         <div className="flex gap-2.5">

@@ -17,13 +17,13 @@ import type { PricingPlan } from "@/types";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.linkedshot.com";
 
 export const metadata = {
-  title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
+  title: "AI Photo Studio for E-commerce | White Background & Lifestyle – LinkedShot",
   description:
-    "Create Amazon-compliant product photos in seconds: white background (#FFFFFF), remove background, HD PNG. 3 free images, no credit card. Try 1 free without sign-up.",
+    "Create Amazon-compliant product photos in seconds: white background (#FFFFFF), AI lifestyle scenes, and HD 4K upscaling. Increase your sales with pro visuals.",
   openGraph: {
-    title: "Amazon Product Photos in Seconds | White Background AI – LinkedShot",
+    title: "AI Photo Studio for E-commerce | LinkedShot",
     description:
-      "Create Amazon-compliant product photos in seconds. White background, remove background, HD PNG. 3 free images.",
+      "Stunning product photos in seconds. White background, lifestyle scenes, 4K upscaling. Increase your conversion rate today.",
     url: siteUrl,
   },
   alternates: { canonical: siteUrl },
@@ -32,27 +32,27 @@ export const metadata = {
 const FAQ_ITEMS = [
   {
     q: "Does it keep natural shadows?",
-    a: "Yes, our AI preserves natural shadows while removing the background, perfect for Amazon's 'shadow allowed' policy.",
+    a: "Yes, our AI preserves natural shadows while removing the background, giving your Amazon products a realistic and pro look.",
+  },
+  {
+    q: "What can I do besides white backgrounds?",
+    a: "We are a full AI studio! You can generate AI Lifestyle scenes (e.g., placing your product on a marble table or beach) and we also offer 4K AI upscaling to make your low-res images crystal clear.",
   },
   {
     q: "How many images can I process?",
-    a: "Each plan gives you credits: 3 free, 50 with Starter (9€ or $9), 200 with Pro (29€ or $29). One credit = one image.",
+    a: "Each plan gives you credits: 3 free, 50 with Starter, 200 with Pro. White backgrounds and upscales cost 1 credit. Lifestyle scenes cost 2 credits.",
   },
   {
     q: "What format should I upload?",
-    a: "JPG, PNG, or WebP. We recommend high-resolution photos (1000px+ width) for best results.",
+    a: "JPG, PNG, or WebP. We recommend high-resolution photos, but if you have low-res ones, you can use our Upscale tool first!",
   },
   {
     q: "Is it really Amazon compliant?",
-    a: "We output pure white (#FFFFFF) HD PNG (1024×1024), which meets Amazon's minimum size (1000px).",
-  },
-  {
-    q: "How do I get a white background for my Amazon product photos?",
-    a: "Upload your product photo to LinkedShot. Our AI removes the background and outputs a pure white (#FFFFFF) or transparent PNG in about 3 seconds. No Photoshop or photographer needed.",
+    a: "Yes. We output pure white (#FFFFFF) HD PNG (1024×1024), which perfectly meets Amazon's strict main image policies.",
   },
   {
     q: "Do I need a subscription?",
-    a: "No. LinkedShot is pay-once, keep forever. Buy 50 or 200 credits, use them at your own pace. No monthly fees.",
+    a: "No. LinkedShot is pay-once, keep forever. Buy credits, use them at your own pace. No monthly fees.",
   },
   {
     q: "What if I'm not satisfied?",
@@ -61,9 +61,9 @@ const FAQ_ITEMS = [
 ] as const;
 
 const plans: PricingPlan[] = [
-  { id: "free", name: "Free", price: 0, credits: 3, features: ["3 free images", "HD PNG export", "No credit card"] },
-  { id: "starter", name: "Starter", price: 9, credits: 50, features: ["50 images", "HD PNG (1024×1024)", "Email support"] },
-  { id: "pro", name: "Pro", price: 29, credits: 200, features: ["200 images", "HD PNG (1024×1024)", "Priority support"] },
+  { id: "free", name: "Free", price: 0, credits: 3, features: ["3 free credits", "Try all AI tools", "No credit card"] },
+  { id: "starter", name: "Starter", price: 9, credits: 50, features: ["50 credits", "Access all generative AI tools", "Email support"] },
+  { id: "pro", name: "Pro", price: 29, credits: 200, features: ["200 credits", "Access all generative AI tools", "Priority support"] },
 ];
 
 const TESTIMONIALS = [
@@ -95,9 +95,9 @@ const TESTIMONIALS = [
 
 const FEATURES = [
   { icon: Target, title: "Amazon-compliant", desc: "Pure white #FFFFFF, HD PNG 1024×1024. Pass Amazon's image requirements every time.", badge: "Guaranteed" },
-  { icon: Zap, title: "Results in ~3 seconds", desc: "One image in ~3 seconds. 50 or 200 images with Starter / Pro plans.", badge: "3s avg." },
+  { icon: Star, title: "AI Lifestyle Scenes", desc: "Instantly place your product in stunning lifestyle scenes like a marble table or cozy studio.", badge: "New ✨" },
+  { icon: Zap, title: "4K HD Upscaling", desc: "Fix low-res supplier images instantly. Upscale to crystal clear quality.", badge: "Sharp" },
   { icon: DollarSign, title: "27× cheaper than Fiverr", desc: "~€0.18 per image vs €2–5. Process your entire catalog for the price of a single Fiverr gig.", badge: "Save 90%" },
-  { icon: Award, title: "No watermark ever", desc: "Your images are 100% yours. No hidden branding or watermarks on any plan.", badge: "Always" },
   { icon: TrendingUp, title: "Bulk processing", desc: "Upload up to 10 images at once and download everything as a ZIP file.", badge: "Up to 10" },
   { icon: Shield, title: "30-day money-back", desc: "If you're not delighted with the results, we'll refund you. No questions asked.", badge: "Risk-free" },
 ];
@@ -126,9 +126,9 @@ export default function Home() {
         <section className="border-b border-zinc-100 bg-white px-4 py-6" aria-label="About">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-sm text-zinc-500 leading-relaxed">
-              <strong className="text-zinc-700">Amazon product photography</strong> made simple: upload any product photo, get a{" "}
-              <strong className="text-zinc-700">white background</strong> or <strong className="text-zinc-700">transparent PNG</strong> that meets Amazon&apos;s image requirements. Our AI{" "}
-              <strong className="text-zinc-700">removes the background</strong> in seconds — no photographer or Photoshop needed. Perfect for FBA sellers and Amazon listings.
+              <strong className="text-zinc-700">AI product photography</strong> made simple: upload any product photo, get a{" "}
+              <strong className="text-zinc-700">white background</strong>, stunning <strong className="text-zinc-700">lifestyle scenes</strong>, or <strong className="text-zinc-700">4K upscaled PNGs</strong>. Our AI{" "}
+              generates results in seconds — no photographer or Photoshop needed. Perfect for boosting conversion rates on FBA and E-commerce.
             </p>
           </div>
         </section>
@@ -163,9 +163,9 @@ export default function Home() {
             <p className="mt-3 text-center text-zinc-500">No learning curve. No Photoshop. Just results.</p>
             <div className="mt-14 grid gap-8 sm:grid-cols-3">
               {[
-                { step: 1, title: "Upload", desc: "Drop your product photo (JPG, PNG, WebP). Up to 10 at once.", icon: "📤", detail: "Any quality, any background" },
-                { step: 2, title: "AI processes", desc: "Our AI removes the background and outputs white or transparent in ~3 seconds.", icon: "⚡", detail: "State-of-the-art result quality" },
-                { step: 3, title: "Download & list", desc: "Get your Amazon-ready HD image (1024×1024, pure white #FFFFFF).", icon: "🚀", detail: "100% Amazon-compliant" },
+                { step: 1, title: "Upload", desc: "Drop your product photo (JPG, PNG, WebP). Up to 10 at once.", icon: "📤", detail: "Any supplier photo" },
+                { step: 2, title: "Choose & Process", desc: "Select White Background, Lifestyle Scene, or Upscale. Let the AI do the magic.", icon: "⚡", detail: "State-of-the-art AI" },
+                { step: 3, title: "Download & Sell", desc: "Get your high-converting images, ready to drive sales on Amazon & Shopify.", icon: "💸", detail: "100% compliance" },
               ].map(({ step, title, desc, icon, detail }) => (
                 <div key={step} className="relative text-center">
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-3xl shadow-sm">
@@ -360,14 +360,13 @@ export default function Home() {
                 <tbody className="divide-y divide-zinc-100">
                   {[
                     { feature: "Price per image", ls: "€0.14–0.18", rb: "€0.23+", pr: "€0.20+/mo", fv: "€2–5" },
+                    { feature: "AI Lifestyle Scenes", ls: "✅ Infinite", rb: "❌ No", pr: "✅ Fixed props", fv: "€25–50+" },
+                    { feature: "HD 4K Upscaling", ls: "✅ 4X", rb: "❌ No", pr: "❌ No", fv: "✅ Extra cost" },
                     { feature: "Pure white #FFFFFF", ls: "✅ Always", rb: "❌ Transparent only", pr: "⚠️ Sometimes gray", fv: "✅ Manual" },
-                    { feature: "Amazon-compliant output", ls: "✅ Guaranteed", rb: "❌ No", pr: "❌ No", fv: "⚠️ Depends" },
+                    { feature: "Amazon-compliant", ls: "✅ Guaranteed", rb: "❌ No", pr: "❌ No", fv: "⚠️ Depends" },
                     { feature: "Processing time", ls: "~3 seconds", rb: "~5 seconds", pr: "~5 seconds", fv: "24-72 hours" },
-                    { feature: "HD 1024×1024 PNG", ls: "✅", rb: "✅ (paid)", pr: "✅ (paid)", fv: "✅" },
                     { feature: "Bulk upload (10+)", ls: "✅", rb: "✅ (API)", pr: "✅", fv: "❌" },
                     { feature: "No subscription", ls: "✅ Pay once", rb: "❌ Monthly", pr: "❌ Monthly", fv: "✅ Per gig" },
-                    { feature: "ZIP download", ls: "✅", rb: "❌", pr: "❌", fv: "❌" },
-                    { feature: "Money-back guarantee", ls: "✅ 30 days", rb: "❌", pr: "❌", fv: "⚠️ Dispute" },
                   ].map(({ feature, ls, rb, pr, fv }) => (
                     <tr key={feature} className="hover:bg-zinc-50 transition">
                       <td className="py-3 px-3 font-medium text-zinc-700">{feature}</td>

@@ -95,7 +95,7 @@ export default function ExitIntentPopup() {
 
           {/* Value prop */}
           <ul className="mb-6 space-y-1.5 text-sm text-zinc-400 text-left">
-            {["50 images for ~€8.10 instead of €9", "200 images for ~€26.10 instead of €29", "One-time payment, no subscription", "30-day money-back guarantee"].map((t) => (
+            {["50 credits for ~€8.10 instead of €9", "200 credits for ~€26.10 instead of €29", "One-time payment, no subscription", "30-day money-back guarantee"].map((t) => (
               <li key={t} className="flex items-center gap-2">
                 <span className="text-emerald-500">✓</span> {t}
               </li>

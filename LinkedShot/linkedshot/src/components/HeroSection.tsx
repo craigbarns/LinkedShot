@@ -84,19 +84,19 @@ export default function HeroSection() {
               id="hero-heading"
               className="text-5xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-6xl"
             >
-              Amazon product
+              The AI Photo Studio
               <br />
-              photos{" "}
+              for{" "}
               <span
                 className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent"
               >
-                in seconds
+                E-commerce
               </span>
             </h1>
 
             <p className="mt-5 text-lg text-zinc-400 leading-relaxed max-w-lg">
-              Remove background. Pure white <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-sm text-emerald-400 font-mono">#FFFFFF</code> or transparent PNG.
-              HD 1024×1024 — Amazon-compliant. No Photoshop, no photographer.
+              White backgrounds for Amazon (<code className="rounded bg-zinc-800 px-1.5 py-0.5 text-sm text-emerald-400 font-mono">#FFFFFF</code>), stunning AI lifestyle scenes, and HD 4K upscaling.
+              Everything you need for perfect listings in seconds.
             </p>
 
             {/* Stats strip */}
